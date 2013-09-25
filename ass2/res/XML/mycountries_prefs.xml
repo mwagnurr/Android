@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:key="checkbox"
+        android:summary="@string/pref_mycountries_sort_summary"
+        android:title="@string/pref_mycountries_sort_title" />
+
+    <ListPreference
+        android:key="listsucks"
+        android:defaultValue="Black"
+        android:entries="@array/mycountries_background_colors"
+        android:entryValues="@array/mycountries_background_colors_values"        
+        android:summary="Define blackground colour"
+        android:title="Backgrounds" />
+    
+</PreferenceScreen>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/solid_black"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="4sp"
+        android:text="@string/mycountries_name"
+        android:textColor="@color/my_yellow_text" />
+
+    <EditText
+        android:id="@+id/mycountry_name_reader"
+        android:layout_width="fill_parent"
+        android:hint="@string/mycountries_name_hint"
+        android:textColor="@color/my_yellow_text"
+        android:layout_height="wrap_content" />
+    
+        <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="4sp"
+        android:text="@string/mycountries_date"
+        android:textColor="@color/my_yellow_text" />
+
+    <EditText
+        android:id="@+id/mycountry_date_reader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/my_yellow_text"
+        android:hint="@string/mycountries_date_hint" />
+
+    <Button
+        android:id="@+id/mycountry_done_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/my_yellow_text"
+        android:text="Done" />
+
+</LinearLayout>

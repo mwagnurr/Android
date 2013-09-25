@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ass2</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="mycountries_app_name">VisitedCountries</string>
+    <string name="mycountries_app_name_form">MyCountries Form</string>
+    <string name="mycountries_app_name_settings">MyCountries Settings</string>
+    <string name="mycountries_date_alert">Input for the date has to be four numbers (e.g. 2013)</string>
+    <string name="mycountries_name_alert">Input for the country name has to be letters only and less then 20 characters</string>
+    <string name="mycountries_name">Enter name of the visited country:</string>
+    <string name="mycountries_date">Enter the date of the visit:</string>
+    <string name="mycountries_name_hint">e.g. Austria</string>
+    <string name="mycountries_date_hint">e.g. 2013</string>
+    <string name="mycountries_action_add">Add country</string>
+    <string name="mycountries_action_sortcountry">Sort by country</string>
+    <string name="mycountries_action_sortyear">Sort by year</string>
+    <string name="mycountries_action">Options</string>
+    <string name="pref_mycountries_sort_title">Ascending Sort Order</string>
+    <string name="pref_mycountries_sort_summary">Check it on for ascending sorting, check it off for descending sorting</string>
+
+    <string name="pref_mycountries_title">MyCountries Settings</string>
+    <string name="pref_mycountries_summary">Settings for the MyCountries App</string>
+    <string name="music_nosd">No SD card detected, please insert one to retrieve music</string>
+    
+    
+    
+    
+</resources>
