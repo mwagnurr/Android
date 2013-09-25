@@ -6,8 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -18,13 +22,15 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
+import at.lnu.ass2.R;
 
 public class MusicService extends Service {
 
-	private NotificationManager notifMan;
+	private NotificationManager notifManager;
 
-	private int NOTIFICATION = 1;
+	private int NOTIFICATION_ID = 1;
 	
 	private static final String TAG = MusicService.class.getSimpleName();
 	
@@ -53,7 +59,7 @@ public class MusicService extends Service {
 		Log.d(TAG, "onCreate() start");
 		super.onCreate();
 		
-		
+		buildNotification();
 
 		// Remember that to use this, we have to declare the
 		// android.permission.WAKE_LOCK
@@ -101,6 +107,34 @@ startForeground(NOTIFICATION_ID, notification);
 //    	//return Service.START_STICKY;
 //    	return Service.START_NOT_STICKY;  
 //    }
+	
+	
+	public void buildNotification(){
+		/* 1. Setup Notification Builder */			
+		Notification.Builder builder = new Notification.Builder(this); 
+		
+		/* 2. Configure Notification Alarm */
+		builder.setSmallIcon(R.drawable.misc)
+			.setWhen(System.currentTimeMillis())
+			.setTicker("Test")
+			.setAutoCancel(true);
+			
+			
+		/* 3. Configure Drop-down Action */
+		builder.setContentTitle("More information")
+				.setContentText("Click to continue.")
+				.setContentInfo("Click!");
+		Intent intent = new Intent(this, MusicPlayer.class);   // Notification intent
+		PendingIntent notifIntent = PendingIntent.getActivity(this, 0, intent, 0);
+		builder.setContentIntent(notifIntent);
+		
+		/* 4. Create Notification and use Manager to launch it */
+		Notification notification = builder.build();	
+		String ns = Context.NOTIFICATION_SERVICE;
+		notifManager = (NotificationManager) getSystemService(ns);
+		notifManager.notify(NOTIFICATION_ID, notification);
+	}
+
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -143,6 +177,22 @@ startForeground(NOTIFICATION_ID, notification);
 			
 		}
 		
+	}
+	
+	public void playNextSong(){
+		if(player==null){
+			Log.e(TAG, "currently no player playing!");
+		}else{
+			player.playNext();
+		}
+	}
+	
+	public void playPreviousSong(){
+		if(player==null){
+			Log.e(TAG, "currently no player playing!");
+		}else{
+			player.playPrevious();
+		}
 	}
 	
 	public void pauseOrResume(){
@@ -205,6 +255,8 @@ startForeground(NOTIFICATION_ID, notification);
 			}
 		}
 		
+		
+		
 		public void playNext(){
 			Log.d(TAG, "playNext() called");
 			if (playListIter.hasNext()) {
@@ -223,6 +275,7 @@ startForeground(NOTIFICATION_ID, notification);
 		
 		public void playPrevious(){
 			Log.d(TAG, "playPrevious() called");
+			
 			if(playListIter.hasPrevious()){
 				play(playListIter.previous());
 			}else{
@@ -232,7 +285,7 @@ startForeground(NOTIFICATION_ID, notification);
 		
 		
 		private void play(Song song) {
-			Log.d(TAG,"play called: " + song);
+			Log.d(TAG,"playing song: " + song);
 			if (song == null){
 				Log.e(TAG, "song is null, cant play");
 				return;

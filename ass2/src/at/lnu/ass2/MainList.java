@@ -63,7 +63,7 @@ public class MainList extends ListActivity {
 	private void setup_activities() {
 		addActivity(getResources().getString(R.string.mycountries_app_name),
 				VisitedCountries.class);
-		addActivity("MusicPlayer (TODO change)",
+		addActivity(getResources().getString(R.string.music_app_name),
 				MusicPlayer.class);
 
 	}

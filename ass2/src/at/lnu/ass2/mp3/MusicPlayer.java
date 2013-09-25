@@ -2,6 +2,7 @@ package at.lnu.ass2.mp3;
 
 import java.util.List;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -20,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import at.lnu.ass2.MainList;
 import at.lnu.ass2.R;
 
 public class MusicPlayer extends Activity {
@@ -77,6 +80,9 @@ public class MusicPlayer extends Activity {
 
 		backwardButton = (ImageButton) findViewById(R.id.music_back_button);
 		backwardButton.setOnClickListener(new BackClick());
+		
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
 
 		Log.d(TAG, "onCreate() - finished");
 	}
@@ -144,11 +150,13 @@ public class MusicPlayer extends Activity {
 				public void onItemClick(AdapterView<?> parent, View view,
 						int pos, long arg3) {
 					Log.d(TAG, "Item clicked - trying to play song: ");
-					// play(playList.get(pos));
+
+					// recreate list from the clicked song as the start (discard
+					// rest)
 					List<Song> clickedList = playList.subList(pos,
 							playList.size());
 					musicService.startPlaying(clickedList, repeatPlayList);
-
+					playButton.setImageResource(R.drawable.btn_pause);
 				}
 			});
 			listView.setAdapter(adapter);
@@ -156,7 +164,7 @@ public class MusicPlayer extends Activity {
 		}
 	}
 
-	class PlayClick implements OnClickListener {
+	private class PlayClick implements OnClickListener {
 
 		@Override
 		public void onClick(View arg0) {
@@ -164,7 +172,7 @@ public class MusicPlayer extends Activity {
 			// PLAY
 			Log.d(TAG, "play button clicked!");
 
-			// musicService.setMusicManager(musicMan);
+			//call service methods and set correct button state
 			if (musicService.getCurrentState() == MusicService.State.Stopped) {
 				Log.d(TAG, "MusicService in State STOPPED");
 				musicService.startPlaying(musicMan.getPlayList(),
@@ -185,31 +193,48 @@ public class MusicPlayer extends Activity {
 
 	}
 
-	class StopClick implements OnClickListener {
+	private class StopClick implements OnClickListener {
 
 		@Override
 		public void onClick(View arg0) {
 			Log.d(TAG, "stop button clicked!");
+
+			// TODO stop Service here!
 		}
 
 	}
 
-	class ForwardClick implements OnClickListener {
+	private class ForwardClick implements OnClickListener {
 
 		@Override
 		public void onClick(View arg0) {
 			Log.d(TAG, "forward button clicked!");
+			musicService.playNextSong();
 		}
 
 	}
 
-	class BackClick implements OnClickListener {
+	private class BackClick implements OnClickListener {
 
 		@Override
 		public void onClick(View arg0) {
 			Log.d(TAG, "back button clicked!");
+			musicService.playPreviousSong();
 		}
 
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			Intent intent = new Intent(this, MainList.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 }

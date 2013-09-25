@@ -23,6 +23,8 @@
     <string name="pref_mycountries_title">MyCountries Settings</string>
     <string name="pref_mycountries_summary">Settings for the MyCountries App</string>
     <string name="music_nosd">No SD card detected, please insert one to retrieve music</string>
+    <string name="music_app_name">Music Player</string>
+    <string name="music_app_name_service">MusicService</string>
     
     
     
