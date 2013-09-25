@@ -1,6 +1,11 @@
 package at.lnu.ass2.mp3;
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
@@ -16,14 +21,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class MusicService extends Service {
-	public static final String ACTION_PLAY = "com.example.android.musicplayer.action.PLAY";
-	public static final String ACTION_PAUSE = "com.example.android.musicplayer.action.PAUSE";
-	public static final String ACTION_STOP = "com.example.android.musicplayer.action.STOP";
-	public static final String ACTION_SKIP = "com.example.android.musicplayer.action.SKIP";
-	public static final String ACTION_REWIND = "com.example.android.musicplayer.action.REWIND";
-	public static final String ACTION_URL = "com.example.android.musicplayer.action.URL";
-
-
 
 	private NotificationManager notifMan;
 
@@ -35,16 +32,28 @@ public class MusicService extends Service {
 	
 	private final IBinder binder = new MusicBinder();
 	
+	/**
+	 * State of the music player
+	 *
+	 */
+    enum State {
+        Stopped,
+        Playing,
+        Paused  
+    };
+    
+    private State currentState = State.Stopped;
 	
-	
-	private MusicManager musicMan;
+    public State getCurrentState(){
+    	return currentState;
+    }
 
 	@Override
 	public void onCreate() {
 		Log.d(TAG, "onCreate() start");
 		super.onCreate();
 		
-		musicMan = new MusicManager(getContentResolver());
+		
 
 		// Remember that to use this, we have to declare the
 		// android.permission.WAKE_LOCK
@@ -82,12 +91,16 @@ startForeground(NOTIFICATION_ID, notification);
 		Log.d(TAG, "onCreate() finished");
 	}
 	
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-    	Log.d(TAG, "onStartCommand(...) flags: " + flags + ", startId: " + startId);
-    	//return Service.START_STICKY;
-    	return Service.START_NOT_STICKY;  
-    }
+//	public void setMusicManager(MusicManager musicMan){
+//		this.musicMan = musicMan;
+//	}
+	
+//    @Override
+//    public int onStartCommand(Intent intent, int flags, int startId) {
+//    	Log.d(TAG, "onStartCommand(...) flags: " + flags + ", startId: " + startId);
+//    	//return Service.START_STICKY;
+//    	return Service.START_NOT_STICKY;  
+//    }
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -98,6 +111,7 @@ startForeground(NOTIFICATION_ID, notification);
 
 	@Override
 	public void onDestroy() {
+		Log.d(TAG, "trying to destroy service");
 		// Cancel the persistent notification.
 		//notifMan.cancel(NOTIFICATION);
 
@@ -105,29 +119,44 @@ startForeground(NOTIFICATION_ID, notification);
 		Toast.makeText(this, "service stopped I guess lawl", Toast.LENGTH_SHORT)
 				.show();
 		
-//		mediaPlayer.stop();
-//		mediaPlayer.release();
-//		mediaPlayer = null;
-		
 		stopForeground(true);
 		
-		Log.d(TAG, "service stopped!");
+		if (player != null) {
+			player.destroyMediaPlayer();
+			player = null;
+		}
+		
+		Log.d(TAG, "service destroyed!");
 	}
 	
-	public void startPlaying(boolean keepPlaying){
+	public void startPlaying(List<Song> playList, boolean playListRepeat){
 		Log.d(TAG, "startPlaying called");
 		
 		if(player==null){
-			player = new Player(keepPlaying);
+			player = new Player(playList, playListRepeat);
 			player.start();
 		}else{
 			Log.d(TAG, "Player already instantinized");
 			player.destroyMediaPlayer();
-			player = new Player(keepPlaying);
+			player = new Player(playList, playListRepeat);
 			player.start();
 			
 		}
 		
+	}
+	
+	public void pauseOrResume(){
+		Log.d(TAG, "pauseOrResume called");
+		
+		if(player==null){
+			Log.e(TAG, "currently no player playing!");
+		}else{
+			try{
+			player.pauseOrResume();
+			}catch(IllegalStateException is){
+				Log.e(TAG, "player currently in an illegal state, aborting");
+			}
+		}
 	}
 
 	
@@ -142,39 +171,66 @@ startForeground(NOTIFICATION_ID, notification);
 		
 		private MediaPlayer mediaPlayer;
 		
-		boolean keepPlaying = false;
-
+		boolean repeatPlayList = false;
 		
-		public Player(){		
-			
+		private List<Song> playList;
+		private ListIterator<Song> playListIter;
+	
+		public Player(List<Song> playlist, boolean keepPlaying){		
+			this.playList = playlist;
+			playListIter = playList.listIterator();
+			this.repeatPlayList = keepPlaying;
 			mediaPlayer = new MediaPlayer();
 			Log.d(TAG, "Player thread created");
 		}
-		public Player(boolean keepPlaying){		
-			
-			this.keepPlaying = keepPlaying;
-			mediaPlayer = new MediaPlayer();
-			Log.d(TAG, "Player thread created");
+		
+		public synchronized void setRepeatPlayList(boolean keepPlaying){
+			this.repeatPlayList = keepPlaying;
 		}
 		
-		public void setKeepPlaying(boolean keepPlaying){
-			this.keepPlaying = keepPlaying;
+		public synchronized boolean getRepeatPlayList(){
+			return repeatPlayList;
 		}
 		
-		public boolean getKeepPlaying(){
-			return keepPlaying;
-		}
-		
-		public void pauseOrResume(){
+		public void pauseOrResume() throws IllegalStateException{
 			if (mediaPlayer.isPlaying()){
 				mediaPlayer.pause(); 
+				currentState = MusicService.State.Paused;
 				Log.d(TAG, "media player paused");
 			}
 			else{
 				mediaPlayer.start(); 
+				currentState = MusicService.State.Playing;
 				Log.d(TAG, "media player started again");
 			}
 		}
+		
+		public void playNext(){
+			Log.d(TAG, "playNext() called");
+			if (playListIter.hasNext()) {
+				play(playListIter.next());
+			}else if (repeatPlayList == true) {
+				
+				Log.d(TAG, "reached end of playlist: recreating ListIterator");
+				playListIter = playList.listIterator();
+
+				if (playListIter.hasNext()) {
+					play(playListIter.next());
+				}
+			}
+			
+		}
+		
+		public void playPrevious(){
+			Log.d(TAG, "playPrevious() called");
+			if(playListIter.hasPrevious()){
+				play(playListIter.previous());
+			}else{
+				Log.d(TAG, "no previous song!");			
+			}
+		}
+		
+		
 		private void play(Song song) {
 			Log.d(TAG,"play called: " + song);
 			if (song == null){
@@ -188,18 +244,11 @@ startForeground(NOTIFICATION_ID, notification);
 				mediaPlayer.reset();
 				mediaPlayer.setDataSource(MusicService.this, Uri.parse(song.getPath())); //set Song to play
 				mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION); //select aoudio stream
-				mediaPlayer.prepare(); //prepare resource synchron (since seperate thread anyway)
+				mediaPlayer.prepare(); //prepare resource synchronosly (since seperate thread anyway)
 				mediaPlayer.setOnCompletionListener(this);
-//						new OnCompletionListener() //handler onDone
-//				{
-//					@Override
-//					public void onCompletion(MediaPlayer mp)
-//					{
-//						Log.d(TAG, " - onCompletion (Listener) - completed song");
-//						play(song);
-//					}
-//				});
 				mediaPlayer.start(); //play!
+				currentState = MusicService.State.Playing;
+				
 				Log.d(TAG, "media player started to play");
 
 			} catch (Exception e) {
@@ -211,14 +260,13 @@ startForeground(NOTIFICATION_ID, notification);
 		
 		@Override
 		public void run() {
-
 			Log.d(TAG, "Player runs");
-			Song song = musicMan.getNextRandomSong();
-			play(song);
-
-
 			
-			// MusicService.this.stopSelf();
+			if(playListIter.hasNext())
+				play(playListIter.next());
+			else
+				Log.d(TAG, "no music in the playlist to play");
+			
 		}
 		
 		public void destroyMediaPlayer(){
@@ -234,24 +282,24 @@ startForeground(NOTIFICATION_ID, notification);
 			if (mediaPlayer.isPlaying())mediaPlayer.stop();
 			mediaPlayer.release();
 			mediaPlayer = null;
-			keepPlaying = false;
+			repeatPlayList = false;
+			currentState = MusicService.State.Stopped;
 			Log.i(TAG, "Stopped and released MediaPlayer");
 		}
 
 		@Override
 		public void onCompletion(MediaPlayer mp) {
 			Log.d(TAG, " - onCompletion (Listener) - completed song in thread");
-			if(keepPlaying ==true){
-				Song next = musicMan.getNextRandomSong();
-				play(next);
-			}else{
-				Log.d(TAG,
-						"Player stopped playing. Thread going to stop and releasing MediaPlayer");
 
-				onThreadDestroy();
-			}
+				playNext();
+
+//				Log.d(TAG,
+//						"Player stopped playing. Thread going to stop and releasing MediaPlayer");
+//
+//				onThreadDestroy();
+
 		}
-		
+
 	}
 
 	public class MusicBinder extends Binder {

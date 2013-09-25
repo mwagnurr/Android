@@ -18,27 +18,27 @@ import at.lnu.ass2.R;
 public class MusicManager {
 	private static final String TAG = MusicManager.class.getSimpleName();
 
-	private List<Song> songs = new ArrayList<Song>();
+	private List<Song> playList = new ArrayList<Song>();
 
 	private ContentResolver contentResolver;
 
 	public MusicManager(ContentResolver contentResolver) {
 		Log.d(TAG, "constructor - ");
 		this.contentResolver = contentResolver;
-		retrieveMusic();
+		//retrieveMusic();
 
 	}
 
 	public Song getNextRandomSong() {
 		Song next = null;
-		if (songs.size() == 0) {
+		if (playList.size() == 0) {
 			Log.d(TAG, "getNextRandomSong() fails - no songs retrieved");
 			return next;
 		}
 		Random randGen = new Random();
-		int rand = randGen.nextInt(songs.size() - 1);
+		int rand = randGen.nextInt(playList.size() - 1);
 		try {
-			next = songs.get(rand);
+			next = playList.get(rand);
 			Log.d(TAG, "getNextRandomSong selected song nr: " + rand + " / "
 					+ next);
 		} catch (IndexOutOfBoundsException ie) {
@@ -47,11 +47,20 @@ public class MusicManager {
 		}
 		return next;
 	}
+	
+	/** 
+	 * 
+	 * @return
+	 */
+	public List<Song> getPlayList(){
+		return playList;
+	}
+	
 
 	/**
 	 * may take long - call asynchronly
 	 */
-	private void retrieveMusic() {
+	public void retrieveMusic() {
 		Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
 		Log.i(TAG, "Querying media from " + uri);
@@ -87,10 +96,11 @@ public class MusicManager {
 					cursor.getString(2), cursor.getString(3),
 					cursor.getLong(4), cursor.getInt(5), cursor.getInt(6));
 
-			songs.add(song);
+			playList.add(song);
 		} while (cursor.moveToNext());
 
-		Log.i(TAG, "Finished retrieving music.. songs size: " + songs.size());
+		
+		Log.i(TAG, "Finished retrieving music.. songs size: " + playList.size());
 	}
 
 }
