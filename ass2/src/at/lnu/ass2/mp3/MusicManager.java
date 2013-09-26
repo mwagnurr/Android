@@ -6,14 +6,10 @@ import java.util.Random;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.Toast;
-import at.lnu.ass2.R;
 
 public class MusicManager {
 	private static final String TAG = MusicManager.class.getSimpleName();
@@ -25,10 +21,14 @@ public class MusicManager {
 	public MusicManager(ContentResolver contentResolver) {
 		Log.d(TAG, "constructor - ");
 		this.contentResolver = contentResolver;
-		//retrieveMusic();
 
 	}
 
+	/**
+	 * method to get a random song from the play list
+	 * 
+	 * @return
+	 */
 	public Song getNextRandomSong() {
 		Song next = null;
 		if (playList.size() == 0) {
@@ -47,18 +47,17 @@ public class MusicManager {
 		}
 		return next;
 	}
-	
-	/** 
-	 * 
-	 * @return
-	 */
-	public List<Song> getPlayList(){
-		return playList;
-	}
-	
 
 	/**
-	 * may take long - call asynchronly
+	 * 
+	 * @return play list of the retrieved music (null if not yet retrieved!)
+	 */
+	public List<Song> getPlayList() {
+		return playList;
+	}
+
+	/**
+	 * retrieve all music from the sd card may take long - call asynchronly
 	 */
 	public void retrieveMusic() {
 		Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -67,8 +66,6 @@ public class MusicManager {
 
 		if (!Environment.MEDIA_MOUNTED.equals(Environment
 				.getExternalStorageState())) {
-			// Toast.makeText(this, R.string.music_nosd,
-			// Toast.LENGTH_SHORT).show();
 			Log.d(TAG, "external storage state is not mounted");
 
 			return;
@@ -99,7 +96,6 @@ public class MusicManager {
 			playList.add(song);
 		} while (cursor.moveToNext());
 
-		
 		Log.i(TAG, "Finished retrieving music.. songs size: " + playList.size());
 	}
 

@@ -49,7 +49,7 @@ public class MusicPlayer extends Activity {
 		}
 	};
 
-	private final String TAG = "MusicPlayerActivity";
+	private static final String TAG = MusicPlayer.class.getSimpleName();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

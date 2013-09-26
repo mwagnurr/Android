@@ -5,10 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-
 import android.os.Bundle;
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.view.Menu;
@@ -20,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import at.lnu.ass2.mp3.MusicPlayer;
 import at.lnu.ass2.mycountries.VisitedCountries;
 
+@SuppressWarnings("rawtypes")
 public class MainList extends ListActivity {
 	private List<String> activities = new ArrayList<String>();
 	private Map<String, Class> name2class = new HashMap<String, Class>();
@@ -27,7 +25,7 @@ public class MainList extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.main_list);
+		// setContentView(R.layout.main_list);
 
 		/* Add Activities to list */
 		setup_activities();
