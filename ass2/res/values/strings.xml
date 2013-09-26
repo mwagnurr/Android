@@ -25,6 +25,10 @@
     <string name="music_nosd">No SD card detected, please insert one to retrieve music</string>
     <string name="music_app_name">Music Player</string>
     <string name="music_app_name_service">MusicService</string>
+    <string name="music_notif_text">Click to get to the music player</string>
+    <string name="music_notif_click">Click!</string>
+    <string name="music_notif_ticker">Music player started!</string>
+    <string name="music_service_stop">Music Service stopped!</string>
     
     
     

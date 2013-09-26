@@ -80,7 +80,7 @@ public class MusicPlayer extends Activity {
 
 		backwardButton = (ImageButton) findViewById(R.id.music_back_button);
 		backwardButton.setOnClickListener(new BackClick());
-		
+
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -156,7 +156,7 @@ public class MusicPlayer extends Activity {
 					List<Song> clickedList = playList.subList(pos,
 							playList.size());
 					musicService.startPlaying(clickedList, repeatPlayList);
-					playButton.setImageResource(R.drawable.btn_pause);
+					changePlayButton();
 				}
 			});
 			listView.setAdapter(adapter);
@@ -172,25 +172,41 @@ public class MusicPlayer extends Activity {
 			// PLAY
 			Log.d(TAG, "play button clicked!");
 
-			//call service methods and set correct button state
+			// call service methods and set correct button state
 			if (musicService.getCurrentState() == MusicService.State.Stopped) {
-				Log.d(TAG, "MusicService in State STOPPED");
+				Log.d(TAG, "starting new playing");
 				musicService.startPlaying(musicMan.getPlayList(),
 						repeatPlayList);
-				playButton.setImageResource(R.drawable.btn_pause);
-
-			} else if (musicService.getCurrentState() == MusicService.State.Playing) {
-				Log.d(TAG, "MusicService in State PLAYING");
-				musicService.pauseOrResume();
-				playButton.setImageResource(R.drawable.btn_play);
 
 			} else {
-				Log.d(TAG, "MusicService in State PAUSED");
+
 				musicService.pauseOrResume();
-				playButton.setImageResource(R.drawable.btn_pause);
+
 			}
+
+			changePlayButton();
 		}
 
+	}
+
+	/**
+	 * changes the image from the play button to pause button while playing (and
+	 * back)
+	 */
+	private void changePlayButton() {
+		// call service methods and set correct button state
+		if (musicService.getCurrentState() == MusicService.State.Stopped) {
+			Log.d(TAG, "MusicService in State STOPPED");
+			playButton.setImageResource(R.drawable.btn_play);
+
+		} else if (musicService.getCurrentState() == MusicService.State.Playing) {
+			Log.d(TAG, "MusicService in State PLAYING");
+			playButton.setImageResource(R.drawable.btn_pause);
+
+		} else {
+			Log.d(TAG, "MusicService in State PAUSED");
+			playButton.setImageResource(R.drawable.btn_play);
+		}
 	}
 
 	private class StopClick implements OnClickListener {
@@ -198,7 +214,9 @@ public class MusicPlayer extends Activity {
 		@Override
 		public void onClick(View arg0) {
 			Log.d(TAG, "stop button clicked!");
-
+			unbindService(connection);
+			Intent intent = new Intent(MusicPlayer.this, MusicService.class);
+			stopService(intent);
 			// TODO stop Service here!
 		}
 
@@ -210,6 +228,7 @@ public class MusicPlayer extends Activity {
 		public void onClick(View arg0) {
 			Log.d(TAG, "forward button clicked!");
 			musicService.playNextSong();
+			changePlayButton();
 		}
 
 	}
@@ -220,10 +239,11 @@ public class MusicPlayer extends Activity {
 		public void onClick(View arg0) {
 			Log.d(TAG, "back button clicked!");
 			musicService.playPreviousSong();
+			changePlayButton();
 		}
 
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
