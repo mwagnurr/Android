@@ -29,6 +29,12 @@
     <string name="music_notif_click">Click!</string>
     <string name="music_notif_ticker">Music player started!</string>
     <string name="music_service_stop">Music Service stopped!</string>
+    <string name="alarm_time">Current Time:</string>
+    <string name="alarm_nextalarm">Next Alarm:</string>
+    <string name="alarm_setalarm_one">Set as one-shot alarm</string>
+    <string name="alarm_setalarm_repeat">Set as repeated alarm</string>
+    <string name="alarm_setnewalarm">Set new alarm:</string>
+    <string name="alarm_app_name">AlarmClock</string>
     
     
     

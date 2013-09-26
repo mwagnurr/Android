@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/solid_black"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="@string/alarm_time"
+        android:textColor="@color/my_yellow_text"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/alarm_time_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="20:19"
+        android:textColor="@color/my_yellow_text"
+        android:textSize="35sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="@string/alarm_nextalarm"
+        android:textColor="@color/my_yellow_text"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/alarm_alarm_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="10:19"
+        android:textColor="@color/my_yellow_text"
+        android:textSize="25sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/alarm_setnewalarm"
+        android:textColor="@color/my_yellow_text"
+        android:textSize="18sp" />
+
+    <TimePicker
+        android:id="@+id/alarm_timepicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/my_yellow_text" />
+
+    <Button
+        android:id="@+id/alarm_one_shot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/alarm_setalarm_one"
+        android:textColor="@color/my_yellow_text" />
+
+    <Button
+        android:id="@+id/alarm_start_repeating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/alarm_setalarm_repeat"
+        android:textColor="@color/my_yellow_text" />
+
+</LinearLayout>

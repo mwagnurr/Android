@@ -42,6 +42,11 @@
         </activity>
         
         <service android:name="at.lnu.ass2.mp3.MusicService" android:enabled="true" />
+        
+        <activity
+            android:name="at.lnu.ass2.alarm.AlarmClock"
+            android:label="@string/alarm_app_name" >   
+        </activity>
     </application>
 
 </manifest>

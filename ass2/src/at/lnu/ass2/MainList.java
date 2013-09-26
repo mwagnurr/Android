@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import at.lnu.ass2.alarm.AlarmClock;
 import at.lnu.ass2.mp3.MusicPlayer;
 import at.lnu.ass2.mycountries.VisitedCountries;
 
@@ -63,6 +64,8 @@ public class MainList extends ListActivity {
 				VisitedCountries.class);
 		addActivity(getResources().getString(R.string.music_app_name),
 				MusicPlayer.class);
+		addActivity(getResources().getString(R.string.alarm_app_name),
+				AlarmClock.class);
 
 	}
 
