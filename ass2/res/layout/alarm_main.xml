@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/solid_black"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/solid_black"
-    android:orientation="vertical" >
+    android:isScrollContainer="true" >
 
     <TextView
+        android:id="@+id/alarm_time_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:text="@string/alarm_time"
         android:textColor="@color/my_yellow_text"
+        android:layout_alignParentTop="true"
         android:textSize="18sp" />
 
     <TextView
@@ -19,51 +22,45 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="20:19"
+        android:layout_below="@id/alarm_time_text"
         android:textColor="@color/my_yellow_text"
         android:textSize="35sp" />
 
     <TextView
+        android:id="@+id/alarm_next_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
+        android:layout_below="@id/alarm_time_display"
         android:text="@string/alarm_nextalarm"
         android:textColor="@color/my_yellow_text"
         android:textSize="18sp" />
 
-    <TextView
+    <ListView 
         android:id="@+id/alarm_alarm_display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="10:19"
-        android:textColor="@color/my_yellow_text"
-        android:textSize="25sp" />
+        android:layout_below="@+id/alarm_next_text"
+        android:layout_above="@+id/alarm_setalarm_text"
+        ></ListView>
 
     <TextView
+        android:id="@+id/alarm_setalarm_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="5dp"
         android:text="@string/alarm_setnewalarm"
         android:textColor="@color/my_yellow_text"
+        android:layout_above="@+id/alarm_setalarm_button"
         android:textSize="18sp" />
 
-    <TimePicker
-        android:id="@+id/alarm_timepicker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/my_yellow_text" />
-
     <Button
-        android:id="@+id/alarm_one_shot"
+        android:id="@+id/alarm_setalarm_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/alarm_setalarm_one"
+        android:layout_alignParentBottom="true"
+        android:text="Set new alarm"
         android:textColor="@color/my_yellow_text" />
 
-    <Button
-        android:id="@+id/alarm_start_repeating"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/alarm_setalarm_repeat"
-        android:textColor="@color/my_yellow_text" />
 
-</LinearLayout>
+</RelativeLayout>

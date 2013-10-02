@@ -4,8 +4,8 @@
     <string name="app_name">ass2</string>
     <string name="action_settings">Settings</string>
     
-    <string name="mycountries_app_name">VisitedCountries</string>
-    <string name="mycountries_app_name_form">MyCountries Form</string>
+    <string name="mycountries_app_name">Visited Countries</string>
+    <string name="mycountries_app_name_form">Visited Countries Form</string>
     <string name="mycountries_app_name_settings">MyCountries Settings</string>
     <string name="mycountries_date_alert">Input for the date has to be four numbers (e.g. 2013)</string>
     <string name="mycountries_name_alert">Input for the country name has to be letters only and less then 20 characters</string>
@@ -19,9 +19,9 @@
     <string name="mycountries_action">Options</string>
     <string name="pref_mycountries_sort_title">Ascending Sort Order</string>
     <string name="pref_mycountries_sort_summary">Check it on for ascending sorting, check it off for descending sorting</string>
-
     <string name="pref_mycountries_title">MyCountries Settings</string>
     <string name="pref_mycountries_summary">Settings for the MyCountries App</string>
+    
     <string name="music_nosd">No SD card detected, please insert one to retrieve music</string>
     <string name="music_app_name">Music Player</string>
     <string name="music_app_name_service">MusicService</string>
@@ -29,14 +29,15 @@
     <string name="music_notif_click">Click!</string>
     <string name="music_notif_ticker">Music player started!</string>
     <string name="music_service_stop">Music Service stopped!</string>
+    
     <string name="alarm_time">Current Time:</string>
-    <string name="alarm_nextalarm">Next Alarm:</string>
+    <string name="alarm_nextalarm">Next Alarms:</string>
     <string name="alarm_setalarm_one">Set as one-shot alarm</string>
     <string name="alarm_setalarm_repeat">Set as repeated alarm</string>
     <string name="alarm_setnewalarm">Set new alarm:</string>
-    <string name="alarm_app_name">AlarmClock</string>
-    
-    
-    
+    <string name="alarm_app_name">Alarm Clock</string>
+    <string name="alarm_app_name_form">Alarm Clock Form</string>
+    <string name="alarm_app_name_receiver">Alarm Receiver</string>
+    <string name="alarm_broadcast">at.lnu.ass2.ALARM_BROADCAST</string>
     
 </resources>
