@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/solid_black"
+    android:orientation="vertical" >
+    <TextView
+        android:id="@+id/alarm_result_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="Alarm went off!"
+        android:textColor="@color/my_yellow_text"
+        android:textSize="18sp" />
+      
+    <Button
+        android:id="@+id/alarm_result_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Stop Alarm"
+        android:textColor="@color/my_yellow_text" />
+    
+     <Button
+        android:id="@+id/alarm_result_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Snooze 5 minutes"
+        android:textColor="@color/my_yellow_text" />
+
+</LinearLayout>

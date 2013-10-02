@@ -63,7 +63,10 @@
                 <action android:name="at.lnu.ass2.ALARM_BROADCAST" />
             </intent-filter>
         </receiver>
-   
+  		 <activity
+            android:name="at.lnu.ass2.alarm.AlarmResult"
+            android:label="@string/alarm_app_name_result" >
+        </activity>
         
         
     </application>

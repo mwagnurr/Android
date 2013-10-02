@@ -39,5 +39,6 @@
     <string name="alarm_app_name_form">Alarm Clock Form</string>
     <string name="alarm_app_name_receiver">Alarm Receiver</string>
     <string name="alarm_broadcast">at.lnu.ass2.ALARM_BROADCAST</string>
+    <string name="alarm_app_name_result">Alarm Result</string>
     
 </resources>

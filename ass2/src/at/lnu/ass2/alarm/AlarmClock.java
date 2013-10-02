@@ -60,6 +60,8 @@ public class AlarmClock extends Activity {
 			Intent intent = new Intent(AlarmClock.this, AlarmForm.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivityForResult(intent, 0);
+			
+			
 		}
 		
 	}

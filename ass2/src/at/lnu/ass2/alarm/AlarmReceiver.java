@@ -13,5 +13,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 		Log.d("AlarmReceiver", "received alarm broad cast");
 		String msg = intent.getStringExtra("message");
 		Toast.makeText(ctx,msg,Toast.LENGTH_SHORT).show();
+		
+		Intent alarmResultIntent = new Intent(ctx, AlarmResult.class);
+		alarmResultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		ctx.startActivity(alarmResultIntent);
 	}
 }
