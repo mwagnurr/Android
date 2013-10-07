@@ -51,11 +51,6 @@
             android:name="at.lnu.ass2.alarm.AlarmForm"
             android:label="@string/alarm_app_name_form" >
         </activity>
-       <!-- <receiver android:name="at.lnu.ass2.alarm.AlarmReceiver" android:label="Alarm Message Receiver">
-			<intent-filter>
-                <action android:name="dv106.lecture4.ALARM_BROADCAST" />
-            </intent-filter>
-        </receiver>     -->
         
           <receiver android:name="at.lnu.ass2.alarm.AlarmReceiver" 
             android:label="@string/alarm_app_name_receiver">
