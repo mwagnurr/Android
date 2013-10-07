@@ -37,6 +37,10 @@ public class CountryVisit{
 		this.name = name;
 	}
 	
+	public String toPresentableString(){
+		return name + ", " + year;
+	}
+	
 	public String toString(){
 		return "[" + id +", " + name + ", " + year + "]";
 	}

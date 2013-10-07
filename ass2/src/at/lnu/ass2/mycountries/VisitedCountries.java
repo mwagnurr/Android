@@ -156,7 +156,7 @@ public class VisitedCountries extends Activity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		if (v.getId() == R.id.listView) {
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-			menu.setHeaderTitle(visits.get(info.position).toString());
+			menu.setHeaderTitle(adapter.getItem((info.position)).toPresentableString());
 			menu.add(0, 0, 0, "Delete");
 		}
 	}
@@ -166,7 +166,7 @@ public class VisitedCountries extends Activity {
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
 				.getMenuInfo();
 		if (item.getItemId() == 0) { // delete task
-			CountryVisit cv = visits.get(info.position);
+			CountryVisit cv = adapter.getItem((info.position));
 			datasource.deleteCountryVisit(cv);
 			adapter.remove(cv);
 		}
