@@ -1,4 +1,4 @@
-package at.lnu.ass3.widget;
+package at.lnu.ass3.weather;
 
 public class WeatherWidget {
 

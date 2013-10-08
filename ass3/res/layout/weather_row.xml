@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/solid_black"
+    android:padding="10dp" >
+
+    <ImageView
+        android:id="@+id/weather_icon"
+        android:layout_width="45dp"
+        android:layout_height="55dp"
+        android:layout_alignParentLeft="true"
+        android:contentDescription="weather icon"
+        android:src="@drawable/n2" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/weather_icon"
+        android:orientation="vertical"
+        android:paddingLeft="10dp" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:textSize="14sp" >
+
+            <TextView
+                android:id="@+id/weather_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2013-09-24"
+                android:textStyle="bold"
+                android:textColor="@color/my_yellow_text" />
+
+            <TextView
+                android:id="@+id/weather_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="Morning"
+                android:textStyle="bold"
+                android:textColor="@color/my_yellow_text" />
+
+            <TextView
+                android:id="@+id/weather_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="08:00 - 14:00"
+                android:textSize="12sp"
+                android:textColor="@color/my_yellow_text" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/weather_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="Schlechtes Wetter"
+            android:textColor="@color/my_yellow_text"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vaxjo_wind"
+                android:textColor="@color/my_yellow_text"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/weather_wind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingLeft="3dp"
+                android:text="ENE"
+                android:textColor="@color/my_yellow_text"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/vaxjo_speed"
+                android:textColor="@color/my_yellow_text"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/weather_windspeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingLeft="3dp"
+                android:text="1.2 m/s"
+                android:textColor="@color/my_yellow_text"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vaxjo_rain"
+                android:textColor="@color/my_yellow_text"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/weather_rain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="3dp"
+                android:text="0.0 mm/h"
+                android:textColor="@color/my_yellow_text"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/weather_temp"
+        android:layout_width="45dp"
+        android:layout_height="55dp"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:paddingLeft="5dp"
+        android:text="0°C"
+        android:textColor="@color/my_yellow_text"
+        android:textSize="16sp" />
+
+</RelativeLayout>

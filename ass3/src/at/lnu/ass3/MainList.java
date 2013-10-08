@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import at.lnu.ass3.telephony.IncomingCalls;
+import at.lnu.ass3.weather.VaxjoWeather;
 
 public class MainList extends ListActivity {
 
@@ -52,7 +54,7 @@ public class MainList extends ListActivity {
     
     private void setup_activities() {
     	addActivity(getResources().getString(R.string.tele_app_name),IncomingCalls.class);
-
+    	addActivity(getResources().getString(R.string.vaxjo_app_name),VaxjoWeather.class); 
     }
     
     private void addActivity(String name, Class activity) {
