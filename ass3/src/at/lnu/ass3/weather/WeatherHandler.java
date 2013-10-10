@@ -14,6 +14,8 @@ import java.net.URLConnection;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import android.util.Log;
 import android.util.Xml;
 
 /**
@@ -42,18 +44,33 @@ public class WeatherHandler extends DefaultHandler{
 	private static final String LAST_UPDATE = "lastupdate";
 	private static final String NEXT_UPDATE = "nextupdate";
 	
-	public static WeatherReport getWeatherReport(URL url) {
-        WeatherHandler handler = new WeatherHandler();
-        try {
-    		URLConnection urlConnection = url.openConnection();
-        	InputStream input = urlConnection.getInputStream() ;
-        	//print_input(input);
-            Xml.parse(input, Xml.Encoding.UTF_8, handler);
-            input.close();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }       
-        return handler.getReport();
+	private static final String TAG = WeatherHandler.class.getSimpleName();
+	
+	private String cityName;
+	private String countryName;
+	
+	public WeatherHandler(String cityName, String countryName){
+		this.cityName = cityName;
+		this.countryName = countryName;
+	}
+	
+	public static WeatherReport getWeatherReport(CityEntity city) {
+		WeatherHandler handler = new WeatherHandler(city.getName(), city.getCountry());
+		URL url = city.getUrl();
+
+		Log.d(TAG, "getWeatherReport called for: " + city.getName() + " state: " + city.getState()
+				+ " country: " + city.getCountry());
+		Log.d(TAG, "URL is: " + url);
+		try {
+			URLConnection urlConnection = url.openConnection();
+			InputStream input = urlConnection.getInputStream();
+			// print_input(input);
+			Xml.parse(input, Xml.Encoding.UTF_8, handler);
+			input.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return handler.getReport();
 	}
 	
 	
@@ -81,7 +98,7 @@ public class WeatherHandler extends DefaultHandler{
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
-		report = new WeatherReport("Vaxjo", "Sweden");
+		report = new WeatherReport(cityName, countryName);
 		//System.out.println("StartDocument");
 	}
 
@@ -90,11 +107,11 @@ public class WeatherHandler extends DefaultHandler{
 			throws SAXException {
 		super.endElement(uri, localName, name);
 		
-//			if (localName.equals(NAME)){
-//				System.out.println(builder.toString());   // Växjö
-//			} else if (localName.equals(COUNTRY)){
-//				System.out.println(builder.toString());   // Sverige
-//			} else 
+			if (localName.equals(NAME)){
+				System.out.println(builder.toString());   // Växjö
+			} else if (localName.equals(COUNTRY)){
+				System.out.println(builder.toString());   // Sverige
+			} else 
 			if (localName.equals(LAST_UPDATE)){
 				//System.out.println("Last:"+builder.toString());  
 				report.setLastUpdated(builder.toString().trim()); // Last updated

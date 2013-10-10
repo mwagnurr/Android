@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/mycountries_menu"
+        android:title="@string/weather_action_add"
+        android:icon="@android:drawable/ic_menu_add"
+        android:showAsAction="ifRoom|withText">
+        <menu>
+           <item android:id="@+id/add_city" android:title="@string/weather_citylist_addcity" />
+        </menu>       
+    </item>
+        
+</menu>

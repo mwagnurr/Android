@@ -34,6 +34,29 @@
             android:name="at.lnu.ass3.weather.VaxjoWeather"
             android:label="@string/vaxjo_app_name" >
         </activity>
+        <activity
+            android:name="at.lnu.ass3.weather.CityList"
+            android:label="@string/weather_city_list_app_name" >
+        </activity>
+        <activity
+            android:name="at.lnu.ass3.weather.CityForm"
+            android:label="@string/weather_city_list_form_app_name" >
+        </activity>
+
+        <receiver
+            android:name=".weather.WeatherWidget"
+            android:label="@string/weather_widget_label" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.AIRPLANE_MODE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_provider" />
+        </receiver>
     </application>
 
 </manifest>

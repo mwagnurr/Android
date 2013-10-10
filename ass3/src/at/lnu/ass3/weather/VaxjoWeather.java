@@ -68,9 +68,9 @@ public class VaxjoWeather extends ListActivity {
 
 		try {
 			URL url = new URL("http://www.yr.no/sted/Sverige/Kronoberg/V%E4xj%F6/forecast.xml");
-
+			CityEntity currCity = new CityEntity("Veitsch", "Steiermark", "Østerrike");
 			if (checkInternetConnection()) {
-				AsyncTask task = new WeatherRetriever().execute(url);
+				AsyncTask task = new WeatherRetriever().execute(currCity);
 			}else{
 				Toast.makeText(this,getResources().getString(R.string.weather_nointernet),Toast.LENGTH_SHORT).show();
 			}
@@ -198,10 +198,10 @@ public class VaxjoWeather extends ListActivity {
 		}
 	}
 
-	private class WeatherRetriever extends AsyncTask<URL, Void, WeatherReport> {
-		protected WeatherReport doInBackground(URL... urls) {
+	private class WeatherRetriever extends AsyncTask<CityEntity, Void, WeatherReport> {
+		protected WeatherReport doInBackground(CityEntity... cities) {
 			try {
-				return WeatherHandler.getWeatherReport(urls[0]);
+				return WeatherHandler.getWeatherReport(cities[0]);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

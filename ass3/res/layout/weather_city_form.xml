@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/solid_black"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="4sp"
+        android:text="@string/weather_city_formdescription"
+        android:textColor="@color/my_yellow_text" />
+    
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="4sp"
+        android:text="@string/weather_city_name"
+        android:textColor="@color/my_yellow_text" />
+
+    <EditText
+        android:id="@+id/weather_city_name_reader"
+        android:layout_width="fill_parent"
+        android:hint="@string/weather_city_name_hint"
+        android:textColor="@color/my_yellow_text"
+        android:layout_height="wrap_content" />
+    
+        <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="4sp"
+        android:text="@string/weather_city_state"
+        android:textColor="@color/my_yellow_text" />
+
+    <EditText
+        android:id="@+id/weather_city_state_reader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/my_yellow_text"
+        android:hint="@string/weather_city_state_hint" />
+    
+     <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="4sp"
+        android:text="@string/weather_city_country"
+        android:textColor="@color/my_yellow_text" />
+
+    <EditText
+        android:id="@+id/weather_city_country_reader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/my_yellow_text"
+        android:hint="@string/weather_city_country_hint" />
+
+    <Button
+        android:id="@+id/mycountry_done_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/my_yellow_text"
+        android:text="Done" />
+
+</LinearLayout>
