@@ -7,9 +7,20 @@
         <item>Dark Green</item>
     </string-array>
     <string-array name="mycountries_background_colors_values">
+        <item>0</item>
         <item>1</item>
         <item>2</item>
-        <item>3</item>
+    </string-array>
+    
+    <string-array name="mycountries_fontsize">
+        <item>Small</item>
+        <item>Normal</item>
+        <item>Big</item>
+    </string-array>
+    <string-array name="mycountries_fontsize_values">
+        <item>12</item>
+        <item>16</item>
+        <item>20</item>
     </string-array>
 
 </resources>

@@ -1,7 +1,9 @@
 package at.lnu.ass2.mycountries;
 
+import java.io.Serializable;
 
-public class CountryVisit{
+public class CountryVisit implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private long id;
 	private int year;
@@ -36,13 +38,13 @@ public class CountryVisit{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public String toPresentableString(){
+
+	public String toPresentableString() {
 		return name + ", " + year;
 	}
-	
-	public String toString(){
-		return "[" + id +", " + name + ", " + year + "]";
+
+	public String toString() {
+		return "[" + id + ", " + name + ", " + year + "]";
 	}
 
 }

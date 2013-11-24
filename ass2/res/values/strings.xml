@@ -3,7 +3,6 @@
 
     <string name="app_name">ass2</string>
     <string name="action_settings">Settings</string>
-    
     <string name="mycountries_app_name">Visited Countries</string>
     <string name="mycountries_app_name_form">Visited Countries Form</string>
     <string name="mycountries_app_name_settings">MyCountries Settings</string>
@@ -16,12 +15,20 @@
     <string name="mycountries_action_add">Add country</string>
     <string name="mycountries_action_sortcountry">Sort by country</string>
     <string name="mycountries_action_sortyear">Sort by year</string>
+    <string name="mycountries_action_settings">Settings</string>
     <string name="mycountries_action">Options</string>
-    <string name="pref_mycountries_sort_title">Ascending Sort Order</string>
-    <string name="pref_mycountries_sort_summary">Check it on for ascending sorting, check it off for descending sorting</string>
     <string name="pref_mycountries_title">MyCountries Settings</string>
     <string name="pref_mycountries_summary">Settings for the MyCountries App</string>
-    
+    <string name="pref_mycountries_sort_title">Ascending Sort Order</string>
+    <string name="pref_mycountries_sort_key">ascOrder</string>
+    <string name="pref_mycountries_sort_summary_on">Check it off for descendingsorting</string>
+    <string name="pref_mycountries_sort_summary_off">Check it on for ascending sorting</string>
+    <string name="pref_mycountries_background_key">backGroundList</string>
+    <string name="pref_mycountries_background_title">Background Color</string>
+    <string name="pref_mycountries_background_summary">Define background color</string>
+    <string name="pref_mycountries_fontsize_key">fontSize</string>
+    <string name="pref_mycountries_fontsize_title">Text Font Size</string>
+    <string name="pref_mycountries_fontsize_summary">Define the font size of the text</string>
     <string name="music_nosd">No SD card detected, please insert one to retrieve music</string>
     <string name="music_app_name">Music Player</string>
     <string name="music_app_name_service">MusicService</string>
@@ -29,8 +36,9 @@
     <string name="music_notif_click">Click!</string>
     <string name="music_notif_ticker">Music player started!</string>
     <string name="music_service_stop">Music Service stopped!</string>
-    
     <string name="alarm_time">Current Time:</string>
+    <string name="alarm_toast_set">Alarm set for: </string>
+    <string name="alarm_toast_goneoff">The one-shot alarm has gone off</string>
     <string name="alarm_nextalarm">Next Alarms:</string>
     <string name="alarm_setalarm_one">Set as one-shot alarm</string>
     <string name="alarm_setalarm_repeat">Set as repeated alarm</string>
@@ -40,5 +48,6 @@
     <string name="alarm_app_name_receiver">Alarm Receiver</string>
     <string name="alarm_broadcast">at.lnu.ass2.ALARM_BROADCAST</string>
     <string name="alarm_app_name_result">Alarm Result</string>
-    
+    <string name="alarm_result_nullalarm">Couldnt snooze, Sorry! Try to create another alarm</string>
+
 </resources>

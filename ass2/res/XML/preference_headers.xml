@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
-	<header android:fragment="at.lnu.mycountries.MyCountriesPreferenceFragment"
+	<header android:fragment="at.lnu.ass2.mycountries.MyCountriesPreferenceFragment"
 		android:title="@string/pref_mycountries_title"
 		android:summary="@string/pref_mycountries_summary" />
-	<!-- TODO Alarm Clock and mp3 player preferences -->
 </preference-headers>

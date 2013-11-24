@@ -2,16 +2,25 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <CheckBoxPreference
-        android:key="checkbox"
-        android:summary="@string/pref_mycountries_sort_summary"
+        android:key="@string/pref_mycountries_sort_key"
+        android:summaryOff="@string/pref_mycountries_sort_summary_off"
+        android:summaryOn="@string/pref_mycountries_sort_summary_on"
+        android:defaultValue="true"
         android:title="@string/pref_mycountries_sort_title" />
 
     <ListPreference
-        android:key="listsucks"
-        android:defaultValue="Black"
+        android:defaultValue="0"
         android:entries="@array/mycountries_background_colors"
-        android:entryValues="@array/mycountries_background_colors_values"        
-        android:summary="Define blackground colour"
-        android:title="Backgrounds" />
-    
+        android:entryValues="@array/mycountries_background_colors_values"
+        android:key="@string/pref_mycountries_background_key"
+        android:summary="@string/pref_mycountries_background_summary"
+        android:title="@string/pref_mycountries_background_title" />
+    <ListPreference
+        android:defaultValue="16"
+        android:entries="@array/mycountries_fontsize"
+        android:entryValues="@array/mycountries_fontsize_values"
+        android:key="@string/pref_mycountries_fontsize_key"
+        android:summary="@string/pref_mycountries_fontsize_summary"
+        android:title="@string/pref_mycountries_fontsize_title" />
+
 </PreferenceScreen>
