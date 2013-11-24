@@ -2,14 +2,9 @@ package at.lnu.ass2.alarm;
 
 import java.util.Calendar;
 
-import org.w3c.dom.Text;
-
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,41 +17,42 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import at.lnu.ass2.R;
-import at.lnu.ass2.mp3.MusicPlayer;
-import at.lnu.ass2.mycountries.DbHelper;
-import at.lnu.ass2.mycountries.VisitedCountries;
 
 public class AlarmForm extends Activity {
 	private static final String TAG = AlarmForm.class.getSimpleName();
 
 	private TimePicker timePicker;
 	private Button oneShotButton;
-	private Button repeatedButton;
 	private TextView textView;
 	private static int currAlarmID = 0;
 	private boolean newAlarm = true;
+	private Alarm updateAlarm;
+
+	private DataSourceAlarm alarmData;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.alarm_form);
 
+		alarmData = new DataSourceAlarm(this);
+
 		Intent intent = getIntent();
-		Alarm alarm = (Alarm) intent.getSerializableExtra("alarm");
+		updateAlarm = (Alarm) intent.getSerializableExtra("alarm");
 
 		textView = (TextView) findViewById(R.id.alarm_setalarm_text);
 		timePicker = (TimePicker) findViewById(R.id.alarm_timepicker);
 
 		oneShotButton = (Button) findViewById(R.id.alarm_one_shot);
 		oneShotButton.setOnClickListener(oneShotListener);
-		repeatedButton = (Button) findViewById(R.id.alarm_start_repeating);
 
-		if (alarm != null) {
+		if (updateAlarm != null) {
 			Log.d(TAG, "received intent with an alarm extra");
-			Calendar cal = alarm.getCalendar();
+			Calendar cal = updateAlarm.getCalendar();
 			timePicker.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
 			timePicker.setCurrentMinute(cal.get(Calendar.MINUTE));
-			textView.setText("Change alarm: ");
+			if(textView!=null)
+				textView.setText("Change alarm: ");
 			newAlarm = false;
 
 			// Schedule the alarm
@@ -66,27 +62,22 @@ public class AlarmForm extends Activity {
 			intent1.putExtra("message", "The one-shot alarm has gone off");
 
 			PendingIntent alarmIntent = PendingIntent.getBroadcast(AlarmForm.this,
-					alarm.getAlarmID(), intent1, 0);
+					updateAlarm.getAlarmID(), intent1, 0);
 
 			am.cancel(alarmIntent);
-			
+
 			Log.d(TAG, "cancelled old alarm. ready to set a new alarm");
 
 		} else {
 			Log.d(TAG, "received intent without any extras");
-			textView.setText("Set new alarm: ");
+			if(textView!=null)
+				textView.setText("Set new alarm: ");
 			newAlarm = true;
 		}
-
-		// /* Assign listener to button */
-		// Button button = (Button) findViewById(R.id.mycountry_done_button);
-		// button.setOnClickListener(new ButtonClick());
-		//
-		// createAlerts();
 	}
 
 	/**
-	 * 
+	 * prepare the result intent for finishing the form
 	 */
 	private void finishIntentRequest(Alarm alarm) {
 		Intent reply = new Intent();
@@ -101,14 +92,6 @@ public class AlarmForm extends Activity {
 
 			Log.d(TAG, "oneShot button clicked");
 
-			if (!newAlarm) {
-				Log.d(TAG, "newAlarm is false");
-
-			}
-
-			currAlarmID = retrieveCurrAlarmID();
-			PendingIntent alarmIntent = createAlarmIntent(currAlarmID);
-
 			// Schedule the alarm
 			AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 
@@ -120,37 +103,60 @@ public class AlarmForm extends Activity {
 			calendar.set(Calendar.MINUTE, min);
 			calendar.set(Calendar.SECOND, 0);
 
-			Alarm newAlarm = new Alarm(currAlarmID, calendar);
+			alarmData.open();
+
+			// new alarm in the form
+			if (newAlarm == true || updateAlarm == null) {
+				Log.d(TAG, "newAlarm is true");
+				currAlarmID = retrieveCurrAlarmID();
+				updateAlarm = alarmData.createAlarmEntry(currAlarmID, calendar);
+
+				// add to alarm count for next created alarm
+				currAlarmID++;
+				storeCurrAlarmID();
+			} else { // updating alarm
+				Log.d(TAG, "newAlarm is false");
+
+				updateAlarm.setCalendar(calendar);
+				alarmData.updateAlarm(updateAlarm);
+
+			}
+			// create the alarm intent either with the old (but now updated) alarm, or a new one
+			PendingIntent alarmIntent = createAlarmIntent(updateAlarm);
+
 			long alarmTime = calendar.getTimeInMillis();
 
 			Log.d(TAG, "alarmTime: " + alarmTime);
 			Log.d(TAG, "currentTime: " + System.currentTimeMillis());
 
-			am.set(AlarmManager.RTC_WAKEUP, alarmTime, alarmIntent);
+			am.set(AlarmManager.RTC_WAKEUP, updateAlarm.getCalendar().getTimeInMillis(),
+					alarmIntent);
 
-			// Tell the user about what we did.
-			String msg = "Alarm set for " + hour + ":" + min;
+			// Tell the user about the alarm creation
+			String msg = getResources().getString(R.string.alarm_toast_set) + hour + ":" + min;
 			Toast.makeText(AlarmForm.this, msg, Toast.LENGTH_LONG).show();
-
-			currAlarmID++;
-			storeCurrAlarmID();
 
 			Log.d(TAG, "onClick ran, currAlarmID = " + currAlarmID);
 
-			finishIntentRequest(newAlarm);
+			finishIntentRequest(updateAlarm);
 
 		}
 
 	};
 
 	/**
+	 * creates a PendingIntent to be received at the AlarmReceiver with a message and the alarm put
+	 * as extra
+	 * 
 	 * @return
 	 */
-	private PendingIntent createAlarmIntent(int alarmID) {
+	private PendingIntent createAlarmIntent(Alarm alarm) {
 		Intent intent = new Intent("at.lnu.ass2.ALARM_BROADCAST");
-		intent.putExtra("message", "The one-shot alarm has gone off");
+		intent.putExtra("message", getResources().getString(R.string.alarm_toast_goneoff));
+		intent.putExtra("alarm", alarm);
 
-		PendingIntent alarmIntent = PendingIntent.getBroadcast(AlarmForm.this, alarmID, intent, 0);
+		PendingIntent alarmIntent = PendingIntent.getBroadcast(AlarmForm.this, alarm.getAlarmID(),
+				intent, 0);
 		return alarmIntent;
 	}
 

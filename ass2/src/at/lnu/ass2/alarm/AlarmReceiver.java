@@ -14,7 +14,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 		String msg = intent.getStringExtra("message");
 		Toast.makeText(ctx,msg,Toast.LENGTH_SHORT).show();
 		
+		//create new intent for the AlarmResult activity and add the sent alarm again
 		Intent alarmResultIntent = new Intent(ctx, AlarmResult.class);
+		alarmResultIntent.putExtra("alarm", intent.getSerializableExtra("alarm"));
 		alarmResultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		ctx.startActivity(alarmResultIntent);
 	}

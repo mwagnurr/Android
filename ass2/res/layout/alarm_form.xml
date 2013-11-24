@@ -17,24 +17,13 @@
         android:id="@+id/alarm_timepicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/alarm_one_shot"
         android:background="@color/my_yellow_text"/>
 
     <Button
         android:id="@+id/alarm_one_shot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/alarm_start_repeating"
         android:text="@string/alarm_setalarm_one"
-        android:textColor="@color/my_yellow_text" />
-
-    <Button
-        android:id="@+id/alarm_start_repeating"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        
-        android:layout_alignParentBottom="true"
-        android:text="@string/alarm_setalarm_repeat"
         android:textColor="@color/my_yellow_text" />
 
 </LinearLayout>

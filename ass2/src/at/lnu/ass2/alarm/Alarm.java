@@ -3,18 +3,18 @@ package at.lnu.ass2.alarm;
 import java.io.Serializable;
 import java.util.Calendar;
 
-import android.app.PendingIntent;
-
-public class Alarm implements Serializable{
+public class Alarm implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
+	private long id;
 	private final int alarmID;
 	private Calendar calendar;
-	
-	public Alarm(int alarmID, Calendar calendar) {
+
+	public Alarm(long id, int alarmID, Calendar calendar) {
 		super();
 		this.calendar = calendar;
 		this.alarmID = alarmID;
+		this.id = id;
 	}
 
 	public Calendar getCalendar() {
@@ -25,24 +25,31 @@ public class Alarm implements Serializable{
 		this.calendar = calendar;
 	}
 
-	
+	/**
+	 * id for alarm manager
+	 * 
+	 * @return
+	 */
 	public int getAlarmID() {
 		return alarmID;
 	}
 
-	public String getTimeAsString(){
-		return calendar.get(Calendar.HOUR_OF_DAY) +  ":" + calendar.get(Calendar.MINUTE);
+	public String getTimeAsString() {
+		return calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE);
+	}
+
+	/**
+	 * database id
+	 * 
+	 * @return
+	 */
+	public long getId() {
+		return id;
 	}
 
 	@Override
 	public String toString() {
-		return "Alarm " +alarmID + " [" + getTimeAsString() + "]";
+		return "Alarm [id=" + id + ", alarmID=" + alarmID + " [" + getTimeAsString() + "]]";
 	}
-	
-	
-	
-	
-	
-	
 
 }
