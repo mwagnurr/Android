@@ -36,6 +36,9 @@
     <string name="music_notif_click">Click!</string>
     <string name="music_notif_ticker">Music player started!</string>
     <string name="music_service_stop">Music Service stopped!</string>
+    <string name="music_layout_play">Play/Pause</string>
+    <string name="music_layout_back">Back</string>
+    <string name="music_layout_forward">Forw.</string>
     <string name="alarm_time">Current Time:</string>
     <string name="alarm_toast_set">Alarm set for: </string>
     <string name="alarm_toast_goneoff">The one-shot alarm has gone off</string>

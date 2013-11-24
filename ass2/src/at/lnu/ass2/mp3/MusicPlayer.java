@@ -27,7 +27,6 @@ import at.lnu.ass2.R;
 
 public class MusicPlayer extends Activity {
 	private ImageButton playButton;
-	private ImageButton stopButton;
 	private ImageButton forwardButton;
 	private ImageButton backwardButton;
 	private ListView listView;
@@ -35,7 +34,9 @@ public class MusicPlayer extends Activity {
 	private MusicManager musicMan;
 	private PlayListAdapter adapter;
 
-	private boolean repeatPlayList = false;
+	private boolean repeatPlayList = true;
+
+	private boolean playing = false;
 
 	private ServiceConnection connection = new ServiceConnection() {
 		// @Override // Called when connection is made
@@ -72,9 +73,6 @@ public class MusicPlayer extends Activity {
 		playButton = (ImageButton) findViewById(R.id.music_play_button);
 		playButton.setOnClickListener(new PlayClick());
 
-		stopButton = (ImageButton) findViewById(R.id.music_stop_button);
-		stopButton.setOnClickListener(new StopClick());
-
 		forwardButton = (ImageButton) findViewById(R.id.music_forward_button);
 		forwardButton.setOnClickListener(new ForwardClick());
 
@@ -84,7 +82,18 @@ public class MusicPlayer extends Activity {
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
+		if (savedInstanceState != null)
+			playing = savedInstanceState.getBoolean("playing");
+
+		updatePlayPauseButton();
+
 		Log.d(TAG, "onCreate() - finished");
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean("playing", playing);
 	}
 
 	@Override
@@ -103,8 +112,7 @@ public class MusicPlayer extends Activity {
 		public View getView(int position, View row, ViewGroup parent) {
 			Song song = getItem(position);
 
-			row = getLayoutInflater().inflate(R.layout.music_list_row, parent,
-					false);
+			row = getLayoutInflater().inflate(R.layout.music_list_row, parent, false);
 
 			TextView name = (TextView) row.findViewById(R.id.label);
 
@@ -118,8 +126,7 @@ public class MusicPlayer extends Activity {
 		}
 	}
 
-	private class RetrieverTask extends
-			AsyncTask<Integer, Integer, MusicManager> {
+	private class RetrieverTask extends AsyncTask<Integer, Integer, MusicManager> {
 		@Override
 		// Heavy work, executed in separate thread
 		protected MusicManager doInBackground(Integer... steps) {
@@ -139,22 +146,19 @@ public class MusicPlayer extends Activity {
 		@Override
 		// called when doInBackground completed, executed in GUI thread
 		protected void onPostExecute(MusicManager result) {
-			Log.d(TAG,
-					"finished retrieving music.. filling playlist adapter now");
+			Log.d(TAG, "finished retrieving music.. filling playlist adapter now");
 
 			final List<Song> playList = result.getPlayList();
 			adapter = new PlayListAdapter(MusicPlayer.this, playList);
 			listView = (ListView) findViewById(R.id.music_playlist);
 			listView.setOnItemClickListener(new OnItemClickListener() {
 				@Override
-				public void onItemClick(AdapterView<?> parent, View view,
-						int pos, long arg3) {
+				public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
 					Log.d(TAG, "Item clicked - trying to play song: ");
 
 					// recreate list from the clicked song as the start (discard
 					// rest)
-					List<Song> clickedList = playList.subList(pos,
-							playList.size());
+					List<Song> clickedList = playList.subList(pos, playList.size());
 					musicService.startPlaying(clickedList, repeatPlayList);
 					changePlayButton();
 				}
@@ -175,12 +179,16 @@ public class MusicPlayer extends Activity {
 			// call service methods and set correct button state
 			if (musicService.getCurrentState() == MusicService.State.Stopped) {
 				Log.d(TAG, "starting new playing");
-				musicService.startPlaying(musicMan.getPlayList(),
-						repeatPlayList);
-
+				musicService.startPlaying(musicMan.getPlayList(), repeatPlayList);
+				playing = true;
 			} else {
 
 				musicService.pauseOrResume();
+
+				if (playing)
+					playing = false;
+				else
+					playing = true;
 
 			}
 
@@ -190,36 +198,30 @@ public class MusicPlayer extends Activity {
 	}
 
 	/**
-	 * changes the image from the play button to pause button while playing (and
-	 * back)
+	 * changes the image from the play button to pause button while playing (and back)
 	 */
 	private void changePlayButton() {
 		// call service methods and set correct button state
 		if (musicService.getCurrentState() == MusicService.State.Stopped) {
 			Log.d(TAG, "MusicService in State STOPPED");
-			playButton.setImageResource(R.drawable.btn_play);
-
 		} else if (musicService.getCurrentState() == MusicService.State.Playing) {
 			Log.d(TAG, "MusicService in State PLAYING");
-			playButton.setImageResource(R.drawable.btn_pause);
-
 		} else {
 			Log.d(TAG, "MusicService in State PAUSED");
-			playButton.setImageResource(R.drawable.btn_play);
 		}
+
+		updatePlayPauseButton();
 	}
 
-	private class StopClick implements OnClickListener {
-
-		@Override
-		public void onClick(View arg0) {
-			Log.d(TAG, "stop button clicked!");
-			unbindService(connection);
-			Intent intent = new Intent(MusicPlayer.this, MusicService.class);
-			stopService(intent);
-			// TODO stop Service here!
+	/**
+	 * 
+	 */
+	private void updatePlayPauseButton() {
+		if (playing) {
+			playButton.setImageResource(R.drawable.btn_pause);
+		} else {
+			playButton.setImageResource(R.drawable.btn_play);
 		}
-
 	}
 
 	private class ForwardClick implements OnClickListener {

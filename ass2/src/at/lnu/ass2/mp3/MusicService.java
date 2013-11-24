@@ -104,7 +104,6 @@ public class MusicService extends Service {
 	public IBinder onBind(Intent arg0) {
 		Log.d(TAG, "onBind received ");
 		return binder;
-		// TODO thread safeness in IBinder
 	}
 
 	@Override
