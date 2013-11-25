@@ -47,8 +47,7 @@ public class MusicService extends Service {
 	}
 
 	/**
-	 * builds the notification and sets it with the service as foreground
-	 * (higher priority service)
+	 * builds the notification and sets it with the service as foreground (higher priority service)
 	 */
 	private void startNotification() {
 
@@ -58,29 +57,25 @@ public class MusicService extends Service {
 
 		/* 2. Configure Notification Alarm */
 		builder.setSmallIcon(R.drawable.music_icon)
-				.setTicker(
-						getResources().getString(R.string.music_notif_ticker))
+				.setTicker(getResources().getString(R.string.music_notif_ticker))
 				.setAutoCancel(false);
 
 		/* 3. Configure Drop-down Action */
-		builder.setContentTitle(
-				getResources().getString(R.string.music_app_name))
-				.setContentInfo(
-						getResources().getString(R.string.music_notif_click));
+		builder.setContentTitle(getResources().getString(R.string.music_app_name)).setContentInfo(
+				getResources().getString(R.string.music_notif_click));
 
+		// determine correct notification display
 		if (player != null && player.getCurrentSong() != null) {
 			String display = player.getCurrentSong().getArtist() + " - "
 					+ player.getCurrentSong().getTitle();
 			builder.setContentText(display);
 		} else {
-			builder.setContentText(getResources().getString(
-					R.string.music_notif_text));
+			builder.setContentText(getResources().getString(R.string.music_notif_text));
 		}
 
 		Intent intent = new Intent(this, MusicPlayer.class); // Notification
 																// intent
-		PendingIntent notifIntent = PendingIntent.getActivity(this, 0, intent,
-				0);
+		PendingIntent notifIntent = PendingIntent.getActivity(this, 0, intent, 0);
 		builder.setContentIntent(notifIntent);
 
 		/* 4. Create Notification and use Manager to launch it */
@@ -113,8 +108,7 @@ public class MusicService extends Service {
 		// notifMan.cancel(NOTIFICATION);
 
 		// Tell the user we stopped.
-		Toast.makeText(this,
-				getResources().getString(R.string.music_service_stop),
+		Toast.makeText(this, getResources().getString(R.string.music_service_stop),
 				Toast.LENGTH_SHORT).show();
 
 		stopForeground(true);
@@ -129,13 +123,37 @@ public class MusicService extends Service {
 		Log.d(TAG, "service destroyed!");
 	}
 
+	/**
+	 * gets the current player song which is played, null if no player is initialized (i.e. because
+	 * didnt start playing yet)
+	 * 
+	 * @return
+	 */
+	public Song getCurrentPlayerSong() {
+
+		if (player != null) {
+			// Log.d(TAG, "getting current player song");
+			return player.getCurrentSong();
+		} else {
+			// Log.e(TAG, "getting current player song failed - null");
+			return null;
+		}
+	}
+
+	/**
+	 * starts the player with the received playlist and a boolean if this list should be repeated or
+	 * with "hard ends" (not possible to go in cycles)
+	 * 
+	 * @param playList
+	 * @param playListRepeat
+	 */
 	public void startPlaying(List<Song> playList, boolean playListRepeat) {
 		Log.d(TAG, "startPlaying called");
 
-		if (player == null) {
+		if (player == null) { // normal start
 			player = new Player(playList, playListRepeat);
 			player.start();
-		} else {
+		} else { // player already initialized - start again, but cleanup last one first
 			Log.d(TAG, "Player already instantinized");
 			player.destroyMediaPlayer();
 			player = new Player(playList, playListRepeat);
@@ -143,6 +161,30 @@ public class MusicService extends Service {
 
 		}
 
+	}
+
+	/**
+	 * overloaded method - similar to {@link #startPlaying(List, boolean) startPlaying(List<Song>
+	 * playList, boolean playListRepeat)} with additional parameter currSongPosition to determine
+	 * starting point of playing in the playlist
+	 * 
+	 * @param playList
+	 * @param currSongPosition
+	 * @param playListRepeat
+	 */
+	public void startPlaying(List<Song> playList, int currSongPosition, boolean playListRepeat) {
+		Log.d(TAG, "startPlaying (with currSongPosition) called");
+
+		if (player == null) { // normal start
+			player = new Player(playList, currSongPosition, playListRepeat);
+			player.start();
+		} else { // player already initialized - start again, but cleanup last one first
+			Log.d(TAG, "Player already instantinized");
+			player.destroyMediaPlayer();
+			player = new Player(playList, currSongPosition, playListRepeat);
+			player.start();
+
+		}
 	}
 
 	/**
@@ -185,17 +227,16 @@ public class MusicService extends Service {
 	}
 
 	/**
-	 * player thread that plays music via a MediaPlayer instance and needs a
-	 * playlist to play if play list changes, new Player may be started but old
-	 * one has to be released via {@link #destroyMediaPlayer()}
+	 * player thread that plays music via a MediaPlayer instance and needs a playlist to play if
+	 * play list changes, new Player may be started but old one has to be released via
+	 * {@link #destroyMediaPlayer()}
 	 * 
 	 * @author Wagi
 	 * 
 	 */
 	private class Player extends Thread implements OnCompletionListener {
 		// nested TAG for debugging
-		private final String TAG = MusicService.TAG + ": "
-				+ Player.class.getSimpleName();
+		private final String TAG = MusicService.TAG + ": " + Player.class.getSimpleName();
 
 		private MediaPlayer mediaPlayer;
 
@@ -219,6 +260,27 @@ public class MusicService extends Service {
 			Log.d(TAG, "Player thread created");
 		}
 
+		public Player(List<Song> playlist, int currSongPosition, boolean keepPlaying) {
+			this.playList = playlist;
+			// check constructor parameters
+			if (playList.isEmpty() || playList == null) {
+				Log.e(TAG, "received playlist is empty or null - abort player creation");
+				return;
+			}
+			if (currSongPosition < 0 || currSongPosition > playlist.size()) {
+				Log.e(TAG, "currSongPosition: " + currSongPosition
+						+ " is not contained in playlist (size: " + playlist.size()
+						+ ") - abort player creation");
+				return;
+			}
+			this.currSongCount = currSongPosition;
+			currSong = playList.get(currSongCount);
+
+			this.repeatPlayList = keepPlaying;
+			mediaPlayer = new MediaPlayer();
+			Log.d(TAG, "Player thread created (with currSongPosition " + currSongPosition + ")");
+		}
+
 		/**
 		 * @return current song that is played in the player
 		 */
@@ -227,11 +289,10 @@ public class MusicService extends Service {
 		}
 
 		/**
-		 * method which either pauses or resumes depending on the current state
-		 * of the media player
+		 * method which either pauses or resumes depending on the current state of the media player
 		 * 
 		 * @throws IllegalStateException
-		 *             if there was an error with the media player state
+		 * if there was an error with the media player state
 		 */
 		public void pauseOrResume() throws IllegalStateException {
 			if (mediaPlayer.isPlaying()) {
@@ -252,9 +313,8 @@ public class MusicService extends Service {
 		}
 
 		/**
-		 * plays the next song in the players' play list if repeatPlayList =
-		 * false: method call does nothing if repeatPlayList = true: begin from
-		 * start again
+		 * plays the next song in the players' play list if repeatPlayList = false: method call does
+		 * nothing if repeatPlayList = true: begin from start again
 		 */
 		public void playNext() {
 			Log.d(TAG, "playNext() called");
@@ -270,15 +330,13 @@ public class MusicService extends Service {
 				currSongCount = 0;
 				play(playList.get(currSongCount));
 			} else {
-				Log.d(TAG,
-						"reached end of playlist already! repeat playlist is false");
+				Log.d(TAG, "reached end of playlist already! repeat playlist is false");
 			}
 		}
 
 		/**
-		 * plays the previous song in the players' play list if repeatPlayList =
-		 * false: method call does nothing if repeatPlayList = true: begin from
-		 * end
+		 * plays the previous song in the players' play list if repeatPlayList = false: method call
+		 * does nothing if repeatPlayList = true: begin from end
 		 */
 		public void playPrevious() {
 			Log.d(TAG, "playPrevious() called");
@@ -291,6 +349,7 @@ public class MusicService extends Service {
 				Log.d(TAG,
 						"reached beginning of playlist, but repeat playlist is true; resetting currSongCount");
 				currSongCount = playList.size() - 1;
+				play(playList.get(currSongCount));
 			} else {
 				Log.d(TAG,
 						"reached beginning of playlist already and cant backwards any more, because: repeat playlist is false");
@@ -299,8 +358,8 @@ public class MusicService extends Service {
 		}
 
 		/**
-		 * main music playing method call this with a Song to set up and prepare
-		 * the media player and play the song
+		 * main music playing method call this with a Song to set up and prepare the media player
+		 * and play the song
 		 * 
 		 * @param song
 		 */
@@ -315,12 +374,12 @@ public class MusicService extends Service {
 					mediaPlayer.stop(); // Stop current song.
 
 				mediaPlayer.reset();
-				mediaPlayer.setDataSource(MusicService.this,
-						Uri.parse(song.getPath())); // set Song to play
-				mediaPlayer
-						.setAudioStreamType(AudioManager.STREAM_NOTIFICATION); // select
-																				// audio
-																				// stream
+				mediaPlayer.setDataSource(MusicService.this, Uri.parse(song.getPath())); // set Song
+																							// to
+																							// play
+				mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION); // select
+																					// audio
+																					// stream
 				mediaPlayer.prepare(); // prepare resource synchronosly (since
 										// seperate thread anyway)
 				mediaPlayer.setOnCompletionListener(this);
@@ -332,8 +391,7 @@ public class MusicService extends Service {
 				Log.d(TAG, "media player started to play");
 
 			} catch (Exception e) {
-				Toast.makeText(MusicService.this,
-						"TODO exception playing song", Toast.LENGTH_SHORT)
+				Toast.makeText(MusicService.this, "TODO exception playing song", Toast.LENGTH_SHORT)
 						.show();
 				e.printStackTrace();
 			}
@@ -350,8 +408,8 @@ public class MusicService extends Service {
 		}
 
 		/**
-		 * method to manually release the media player (and therefor stops
-		 * playing and notification, etc)
+		 * method to manually release the media player (and therefor stops playing and notification,
+		 * etc)
 		 */
 		public void destroyMediaPlayer() {
 			Log.i(TAG, "player thread gets stopped manually");
@@ -370,8 +428,7 @@ public class MusicService extends Service {
 			repeatPlayList = false;
 			currentState = MusicService.State.Stopped;
 			stopNotification();
-			Log.i(TAG,
-					"Stopped and released MediaPlayer and removed Notification");
+			Log.i(TAG, "Stopped and released MediaPlayer and removed Notification");
 		}
 
 		@Override

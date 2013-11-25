@@ -3,6 +3,7 @@ package at.lnu.ass2.alarm;
 import java.util.Calendar;
 import java.util.List;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -23,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import at.lnu.ass2.MainList;
 import at.lnu.ass2.R;
 
 public class AlarmClock extends Activity {
@@ -59,6 +61,9 @@ public class AlarmClock extends Activity {
 
 		alarmListView.setAdapter(adapter);
 		registerForContextMenu(alarmListView);
+
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
 
 		Thread thr = new Thread(null, time_work, "Time Display");
 		thr.start();
@@ -225,5 +230,18 @@ public class AlarmClock extends Activity {
 
 		}
 	};
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			Intent intent = new Intent(this, MainList.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 
 }

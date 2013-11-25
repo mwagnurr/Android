@@ -13,8 +13,8 @@ public class Song {
 
 	}
 
-	public Song(String artist, String album, String title, String path,
-			long duration, int trackNr, int year) {
+	public Song(String artist, String album, String title, String path, long duration, int trackNr,
+			int year) {
 		super();
 		this.artist = artist;
 		this.album = album;
@@ -83,9 +83,50 @@ public class Song {
 
 	@Override
 	public String toString() {
-		return "Song [artist=" + artist + ", album=" + album + ", title="
-				+ title + ", path=" + path + ", duration=" + duration
-				+ ", trackNr=" + trackNr + ", year=" + year + "]";
+		return "Song [artist=" + artist + ", album=" + album + ", title=" + title + ", path="
+				+ path + ", duration=" + duration + ", trackNr=" + trackNr + ", year=" + year + "]";
+	}
+
+
+	/**
+	 * auto generated equals method to compare entities
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Song other = (Song) obj;
+		if (album == null) {
+			if (other.album != null)
+				return false;
+		} else if (!album.equals(other.album))
+			return false;
+		if (artist == null) {
+			if (other.artist != null)
+				return false;
+		} else if (!artist.equals(other.artist))
+			return false;
+		if (duration != other.duration)
+			return false;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		if (trackNr != other.trackNr)
+			return false;
+		if (year != other.year)
+			return false;
+		return true;
 	}
 
 }

@@ -11,6 +11,12 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
+/**
+ * class which provides methods for music retrieval and for convenience
+ * 
+ * @author Wagi
+ * 
+ */
 public class MusicManager {
 	private static final String TAG = MusicManager.class.getSimpleName();
 
@@ -39,8 +45,7 @@ public class MusicManager {
 		int rand = randGen.nextInt(playList.size() - 1);
 		try {
 			next = playList.get(rand);
-			Log.d(TAG, "getNextRandomSong selected song nr: " + rand + " / "
-					+ next);
+			Log.d(TAG, "getNextRandomSong selected song nr: " + rand + " / " + next);
 		} catch (IndexOutOfBoundsException ie) {
 			Log.e(TAG, "error in getNextRandomSong()");
 			ie.printStackTrace();
@@ -64,8 +69,7 @@ public class MusicManager {
 
 		Log.i(TAG, "Querying media from " + uri);
 
-		if (!Environment.MEDIA_MOUNTED.equals(Environment
-				.getExternalStorageState())) {
+		if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 			Log.d(TAG, "external storage state is not mounted");
 
 			return;
@@ -75,23 +79,20 @@ public class MusicManager {
 		Cursor cursor = contentResolver.query(
 				// using content resolver to read music from media storage
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, new String[] {
-						MediaStore.Audio.Media.ARTIST,
-						MediaStore.Audio.Media.ALBUM,
-						MediaStore.Audio.Media.TITLE,
-						MediaStore.Audio.Media.DATA,
-						MediaStore.Audio.Media.DURATION,
-						MediaStore.Audio.Media.TRACK,
-						MediaStore.Audio.Media.YEAR },
-				MediaStore.Audio.Media.IS_MUSIC + " > 0 ", null, null);
+						MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM,
+						MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DATA,
+						MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.TRACK,
+						MediaStore.Audio.Media.YEAR }, MediaStore.Audio.Media.IS_MUSIC + " > 0 ",
+				null, null);
 
 		if (cursor == null || !cursor.moveToFirst()) {
-			Log.e(TAG, "No music to retrieve");
+			Log.e(TAG, "No music to retrieve!");
+			return;
 		}
 
 		do {
-			Song song = new Song(cursor.getString(0), cursor.getString(1),
-					cursor.getString(2), cursor.getString(3),
-					cursor.getLong(4), cursor.getInt(5), cursor.getInt(6));
+			Song song = new Song(cursor.getString(0), cursor.getString(1), cursor.getString(2),
+					cursor.getString(3), cursor.getLong(4), cursor.getInt(5), cursor.getInt(6));
 
 			playList.add(song);
 		} while (cursor.moveToNext());

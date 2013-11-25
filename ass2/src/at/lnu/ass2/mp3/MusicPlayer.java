@@ -34,6 +34,9 @@ public class MusicPlayer extends Activity {
 	private MusicManager musicMan;
 	private PlayListAdapter adapter;
 
+	/**
+	 * defines if the play list should be repeated or not - currently hardcoded and not via UI
+	 */
 	private boolean repeatPlayList = true;
 
 	private boolean playing = false;
@@ -85,7 +88,7 @@ public class MusicPlayer extends Activity {
 		if (savedInstanceState != null)
 			playing = savedInstanceState.getBoolean("playing");
 
-		updatePlayPauseButton();
+		updatePlayPauseButtonImage();
 
 		Log.d(TAG, "onCreate() - finished");
 	}
@@ -118,14 +121,37 @@ public class MusicPlayer extends Activity {
 
 			String listText = song.getArtist() + " - " + song.getTitle();
 			name.setText(listText);
+
+			if (musicService != null) {
+				// Log.d(TAG, "getView - service not null");
+				Song currSong = musicService.getCurrentPlayerSong();
+				if (currSong != null) {
+
+					if (song.equals(currSong)) {
+						Log.d(TAG, "getView - found curr playing song in adapter, setting yellow");
+						name.setTextColor(getResources().getColor(R.color.solid_yellow));
+					}
+				}
+
+			} else {
+				// Log.d(TAG, "getView - service null!");
+			}
+
 			row.setTag(song);
 
-			Log.d(TAG, "playlistadapter - getView called");
+			// Log.d(TAG, "playlistadapter - getView called");
 
 			return row;
 		}
 	}
 
+	/**
+	 * asynchronousily retrieves music from the external storage with MusicManager and initialises
+	 * music song list
+	 * 
+	 * @author Wagi
+	 * 
+	 */
 	private class RetrieverTask extends AsyncTask<Integer, Integer, MusicManager> {
 		@Override
 		// Heavy work, executed in separate thread
@@ -151,21 +177,41 @@ public class MusicPlayer extends Activity {
 			final List<Song> playList = result.getPlayList();
 			adapter = new PlayListAdapter(MusicPlayer.this, playList);
 			listView = (ListView) findViewById(R.id.music_playlist);
-			listView.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
-					Log.d(TAG, "Item clicked - trying to play song: ");
-
-					// recreate list from the clicked song as the start (discard
-					// rest)
-					List<Song> clickedList = playList.subList(pos, playList.size());
-					musicService.startPlaying(clickedList, repeatPlayList);
-					changePlayButton();
-				}
-			});
+			listView.setOnItemClickListener(new MusicListItemClick(playList));
 			listView.setAdapter(adapter);
-
+			
+//			String msg = getResources().getString(R.string.music_toast_retrieved);
+//			Toast.makeText(MusicPlayer.this, msg, Toast.LENGTH_LONG).show();
 		}
+	}
+
+	/**
+	 * Listener for item click on the music song list
+	 * 
+	 * @author Wagi
+	 * 
+	 */
+	private class MusicListItemClick implements OnItemClickListener {
+
+		private List<Song> playlist;
+
+		public MusicListItemClick(List<Song> playlist) {
+			this.playlist = playlist;
+		}
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int pos, long arg3) {
+			Log.d(TAG, "Item clicked - trying to play song with pos: " + pos + " playlist size: "
+					+ playlist.size());
+
+			musicService.startPlaying(playlist, pos, repeatPlayList);
+			playing = true;
+
+			// update play button image and notify adapter to redraw list for highlighting
+			changePlayButton();
+			adapter.notifyDataSetChanged();
+		}
+
 	}
 
 	private class PlayClick implements OnClickListener {
@@ -185,14 +231,16 @@ public class MusicPlayer extends Activity {
 
 				musicService.pauseOrResume();
 
-				if (playing)
+				if (playing || musicService.getCurrentState() == MusicService.State.Playing)
 					playing = false;
 				else
 					playing = true;
 
 			}
 
+			// update play button image and notify adapter to redraw list for highlighting
 			changePlayButton();
+			adapter.notifyDataSetChanged();
 		}
 
 	}
@@ -210,13 +258,14 @@ public class MusicPlayer extends Activity {
 			Log.d(TAG, "MusicService in State PAUSED");
 		}
 
-		updatePlayPauseButton();
+		updatePlayPauseButtonImage();
 	}
 
 	/**
-	 * 
+	 * updates the background image of the play/pause button depending on the member variable
+	 * "playing"
 	 */
-	private void updatePlayPauseButton() {
+	private void updatePlayPauseButtonImage() {
 		if (playing) {
 			playButton.setImageResource(R.drawable.btn_pause);
 		} else {
@@ -230,7 +279,11 @@ public class MusicPlayer extends Activity {
 		public void onClick(View arg0) {
 			Log.d(TAG, "forward button clicked!");
 			musicService.playNextSong();
+			playing = true;
+
+			// update play button image and notify adapter to redraw list for highlighting
 			changePlayButton();
+			adapter.notifyDataSetChanged();
 		}
 
 	}
@@ -241,7 +294,11 @@ public class MusicPlayer extends Activity {
 		public void onClick(View arg0) {
 			Log.d(TAG, "back button clicked!");
 			musicService.playPreviousSong();
+			playing = true;
+
+			// update play button image and notify adapter to redraw list for highlighting
 			changePlayButton();
+			adapter.notifyDataSetChanged();
 		}
 
 	}

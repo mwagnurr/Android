@@ -21,7 +21,7 @@
     <string name="pref_mycountries_summary">Settings for the MyCountries App</string>
     <string name="pref_mycountries_sort_title">Ascending Sort Order</string>
     <string name="pref_mycountries_sort_key">ascOrder</string>
-    <string name="pref_mycountries_sort_summary_on">Check it off for descendingsorting</string>
+    <string name="pref_mycountries_sort_summary_on">Check it off for descending sorting</string>
     <string name="pref_mycountries_sort_summary_off">Check it on for ascending sorting</string>
     <string name="pref_mycountries_background_key">backGroundList</string>
     <string name="pref_mycountries_background_title">Background Color</string>
@@ -32,6 +32,7 @@
     <string name="music_nosd">No SD card detected, please insert one to retrieve music</string>
     <string name="music_app_name">Music Player</string>
     <string name="music_app_name_service">MusicService</string>
+    <string name="music_toast_retrieved">Finished retrieving music</string>
     <string name="music_notif_text">Click to get to the music player</string>
     <string name="music_notif_click">Click!</string>
     <string name="music_notif_ticker">Music player started!</string>
@@ -52,5 +53,8 @@
     <string name="alarm_broadcast">at.lnu.ass2.ALARM_BROADCAST</string>
     <string name="alarm_app_name_result">Alarm Result</string>
     <string name="alarm_result_nullalarm">Couldnt snooze, Sorry! Try to create another alarm</string>
+    <string name="alarm_result_text">Alarm went off!</string>
+    <string name="alarm_result_stop_button">Stop Alarm</string>
+    <string name="alarm_result_snooze_button">Snooze 5 minutes</string>
 
 </resources>
