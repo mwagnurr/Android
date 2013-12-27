@@ -88,7 +88,7 @@ public class MusicPlayer extends Activity {
 		if (savedInstanceState != null)
 			playing = savedInstanceState.getBoolean("playing");
 
-		updatePlayPauseButtonImage();
+		changePlayButton();
 
 		Log.d(TAG, "onCreate() - finished");
 	}
@@ -179,9 +179,9 @@ public class MusicPlayer extends Activity {
 			listView = (ListView) findViewById(R.id.music_playlist);
 			listView.setOnItemClickListener(new MusicListItemClick(playList));
 			listView.setAdapter(adapter);
-			
-//			String msg = getResources().getString(R.string.music_toast_retrieved);
-//			Toast.makeText(MusicPlayer.this, msg, Toast.LENGTH_LONG).show();
+
+			// String msg = getResources().getString(R.string.music_toast_retrieved);
+			// Toast.makeText(MusicPlayer.this, msg, Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -239,7 +239,7 @@ public class MusicPlayer extends Activity {
 			}
 
 			// update play button image and notify adapter to redraw list for highlighting
-			changePlayButton();
+			updatePlayPauseButtonImage();
 			adapter.notifyDataSetChanged();
 		}
 
@@ -250,12 +250,18 @@ public class MusicPlayer extends Activity {
 	 */
 	private void changePlayButton() {
 		// call service methods and set correct button state
-		if (musicService.getCurrentState() == MusicService.State.Stopped) {
-			Log.d(TAG, "MusicService in State STOPPED");
-		} else if (musicService.getCurrentState() == MusicService.State.Playing) {
-			Log.d(TAG, "MusicService in State PLAYING");
-		} else {
-			Log.d(TAG, "MusicService in State PAUSED");
+
+		if (musicService != null) {
+			if (musicService.getCurrentState() == MusicService.State.Stopped) {
+				Log.d(TAG, "MusicService in State STOPPED");
+				playing = false;
+			} else if (musicService.getCurrentState() == MusicService.State.Playing) {
+				Log.d(TAG, "MusicService in State PLAYING");
+				playing = true;
+			} else {
+				Log.d(TAG, "MusicService in State PAUSED");
+				playing = false;
+			}
 		}
 
 		updatePlayPauseButtonImage();
