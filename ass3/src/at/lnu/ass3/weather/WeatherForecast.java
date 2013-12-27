@@ -5,6 +5,8 @@
  */
 package at.lnu.ass3.weather;
 
+import java.io.Serializable;
+
 import android.text.format.Time;
 
 /**
@@ -16,7 +18,9 @@ import android.text.format.Time;
  * @author jonasl
  *
  */
-public class WeatherForecast {
+public class WeatherForecast implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	private Time startTime, endTime;
 	private int period_code, weather_code;
 	private String weather_name;  // Name in Norwegian!

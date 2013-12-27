@@ -31,20 +31,19 @@ import at.lnu.ass3.MainList;
 import at.lnu.ass3.R;
 
 /**
- * This is a first prototype for a weather app. It is currently only downloading
- * weather data for Växjö.
+ * This is a first prototype for a weather app. It is currently only downloading weather data for
+ * Växjö.
  * 
- * This activity downloads weather data and constructs a WeatherReport, a data
- * structure containing weather data for a number of periods ahead.
+ * This activity downloads weather data and constructs a WeatherReport, a data structure containing
+ * weather data for a number of periods ahead.
  * 
- * The WeatherHandler is a SAX parser for the weather reports (forecast.xml)
- * produced by www.yr.no. The handler constructs a WeatherReport containing meta
- * data for a given location (e.g. city, country, last updated, next update) and
- * a sequence of WeatherForecasts. Each WeatherForecast represents a forecast
- * (weather, rain, wind, etc) for a given time period.
+ * The WeatherHandler is a SAX parser for the weather reports (forecast.xml) produced by www.yr.no.
+ * The handler constructs a WeatherReport containing meta data for a given location (e.g. city,
+ * country, last updated, next update) and a sequence of WeatherForecasts. Each WeatherForecast
+ * represents a forecast (weather, rain, wind, etc) for a given time period.
  * 
- * The next task is to construct a list based GUI where each row displays the
- * weather data for a single period.
+ * The next task is to construct a list based GUI where each row displays the weather data for a
+ * single period.
  * 
  * 
  * @author jlnmsi
@@ -55,9 +54,7 @@ public class VaxjoWeather extends ListActivity {
 	private InputStream input;
 	private WeatherReport report = null;
 	private WeatherAdapter adapter;
-	private static final String[] periods = { "Night time", "Morning",
-			"Day time", "Evening" };
-	
+	private static final String[] periods = { "Night time", "Morning", "Day time", "Evening" };
 
 	private static final String TAG = VaxjoWeather.class.getSimpleName();
 
@@ -66,17 +63,23 @@ public class VaxjoWeather extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		try {
-			URL url = new URL("http://www.yr.no/sted/Sverige/Kronoberg/V%E4xj%F6/forecast.xml");
-			CityEntity currCity = new CityEntity("Veitsch", "Steiermark", "�sterrike");
-			if (checkInternetConnection()) {
-				AsyncTask task = new WeatherRetriever().execute(currCity);
-			}else{
-				Toast.makeText(this,getResources().getString(R.string.weather_nointernet),Toast.LENGTH_SHORT).show();
+		Intent intent = getIntent();
+
+		CityEntity city = (CityEntity) intent.getSerializableExtra("city");
+
+		if (checkInternetConnection() && city != null) {
+			Log.d(TAG, "internet connection - attempt to retrieve weather information");
+			new WeatherRetriever().execute(city);
+		} else {
+			Toast.makeText(this, getResources().getString(R.string.weather_nointernet),
+					Toast.LENGTH_SHORT).show();
+			Log.e(TAG, "no internet connection - do not attempt to retrieve weather information");
+
+			if (city == null) {
+				Log.e(TAG, "no city entity in intent! error");
 			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
 		}
+		
 
 		/* Setup ListAdapter */
 		adapter = new WeatherAdapter(this);
@@ -87,7 +90,7 @@ public class VaxjoWeather extends ListActivity {
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 	}
-	
+
 	private boolean checkInternetConnection() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -142,8 +145,8 @@ public class VaxjoWeather extends ListActivity {
 			// filling row with weather forecast
 			ImageView icon = (ImageView) row.findViewById(R.id.weather_icon);
 			int weatherCode = wf.getWeatherCode(); // TODO check code range
-			int resID = getResources().getIdentifier("n" + weatherCode,
-					"drawable", getPackageName());
+			int resID = getResources().getIdentifier("n" + weatherCode, "drawable",
+					getPackageName());
 			icon.setImageResource(resID);
 
 			TextView desc = (TextView) row.findViewById(R.id.weather_desc);
@@ -166,8 +169,7 @@ public class VaxjoWeather extends ListActivity {
 			TextView wind = (TextView) row.findViewById(R.id.weather_wind);
 			wind.setText(wf.getWindDirectionName());
 
-			TextView windSpeed = (TextView) row
-					.findViewById(R.id.weather_windspeed);
+			TextView windSpeed = (TextView) row.findViewById(R.id.weather_windspeed);
 			windSpeed.setText(wf.getWindSpeedName());
 
 			TextView period = (TextView) row.findViewById(R.id.weather_period);
@@ -222,9 +224,8 @@ public class VaxjoWeather extends ListActivity {
 
 				WeatherForecast curr = iter.next();
 				adapter.add(curr);
-				System.out.println("adding curr: " + curr.getPeriodCode()
-						+ " start: " + curr.getStartYYMMDD() + " end: "
-						+ curr.getEndYYMMDD());
+				System.out.println("adding curr: " + curr.getPeriodCode() + " start: "
+						+ curr.getStartYYMMDD() + " end: " + curr.getEndYYMMDD());
 			}
 			setListAdapter(adapter);
 		}

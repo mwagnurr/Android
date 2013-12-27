@@ -7,7 +7,7 @@
     android:orientation="horizontal" >
 
     <ImageView
-        android:id="@+id/weather_icon"
+        android:id="@+id/weather_widget_icon"
         android:layout_width="45dp"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
@@ -24,16 +24,17 @@
         android:paddingLeft="10dp" >
 
         <TextView
-            android:id="@+id/weather_city"
+            android:id="@+id/weather_widget_city"
             style="@android:style/TextAppearance.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Vaxjo"
             android:textColor="@color/my_yellow_text"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/weather_temp"
+            android:id="@+id/weather_widget_temp"
             style="@android:style/TextAppearance.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,19 +42,20 @@
             android:paddingLeft="5dp"
             android:text="0°C"
             android:textColor="@color/my_yellow_text"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
        
     </LinearLayout>
     
      <Button
-            android:id="@+id/weather_update_button"
+            android:id="@+id/weather_widget_update_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_toRightOf="@id/weather_widget_textlayout"
             android:layout_marginLeft="10dp"
             android:layout_centerVertical="true"
+            android:textSize="14sp"
             android:text="@string/weather_widget_update_button"
             android:textColor="@color/my_yellow_text" />
 
