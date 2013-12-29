@@ -75,7 +75,8 @@ public class WeatherWidget extends AppWidgetProvider {
 		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.weather_widget);
 
 		CityEntity city = retrieveCityEntity(context, appWidgetId);
-		views.setTextViewText(R.id.weather_widget_city, city.getName());
+		if (city != null)
+			views.setTextViewText(R.id.weather_widget_city, city.getName());
 
 		Intent updateClick = new Intent(context, WeatherWidget.class);
 		updateClick.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);

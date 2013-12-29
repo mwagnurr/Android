@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/call_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/solid_black"
+    android:padding="10dp"
+    android:text="19882323-TEST"
+    android:textColor="@color/my_yellow_text"
+    android:textSize="16sp" >
+
+</TextView>

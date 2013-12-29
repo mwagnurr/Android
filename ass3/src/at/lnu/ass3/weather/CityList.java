@@ -60,8 +60,6 @@ public class CityList extends ListActivity {
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
-		registerForContextMenu(getListView());
-
 		Log.d(TAG, "onCreate finished");
 	}
 
