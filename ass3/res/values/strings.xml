@@ -8,6 +8,7 @@
     <string name="vaxjo_rain">Rain:</string>
     <string name="vaxjo_speed">Speed:</string>
     <string name="vaxjo_temp_unit">°C</string>
+    <string name="vaxjo_windspeed_unit">m/s</string>
     <string name="vaxjo_rain_unit">mm/h</string>
     <string name="weather_nointernet">No internet connection! Can not retrieve new weather data</string>
     <string name="weather_widget_label">1Weather</string>
@@ -25,5 +26,5 @@
     <string name="weather_city_state_hint">e.g. Kronoberg</string>
     <string name="weather_city_formdescription">Please enter the correct details of the city you want to retrieve the weather from</string>
     <string name="weather_widget_update_button">Update</string>
-
+	<string name="weather_widget_icon_hint">Weather Icon</string>
 </resources>

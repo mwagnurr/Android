@@ -19,6 +19,8 @@ import at.lnu.ass3.R;
 
 public class WeatherWidget extends AppWidgetProvider {
 	private static final String TAG = WeatherWidget.class.getSimpleName();
+	
+	private boolean airPlaneMode = false;
 
 	public void update(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		Log.d(TAG, "updateWidget method called");
@@ -34,7 +36,18 @@ public class WeatherWidget extends AppWidgetProvider {
 			Log.d(TAG, "sent start Service intent for appWidgetId " + appWidgetId);
 
 			
+			//creating initial widget view
 			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.weather_widget);
+			
+			
+			Intent updateClick = new Intent(context, WeatherWidget.class);
+			updateClick.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+			int[] ids = { appWidgetId };
+			updateClick.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+			PendingIntent updatePen = PendingIntent.getBroadcast(context, appWidgetId, updateClick, 0);
+			views.setOnClickPendingIntent(R.id.weather_widget_update_button, updatePen);
+			
+		
 			
 			appWidgetManager.updateAppWidget(appWidgetId, views);
 			/**
@@ -85,15 +98,17 @@ public class WeatherWidget extends AppWidgetProvider {
 
 		if (intent.getAction().equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
 
-			ComponentName thisWidget = new ComponentName(context, WeatherWidget.class);
-			AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-			int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-			update(context, appWidgetManager, appWidgetIds);
-		} else if (intent.getAction().equals("FINISHED_FORECAST")) {
-
-			Log.d(TAG, "");
-
-		}
+			Log.d(TAG, "user switched to air plane mode");
+			
+			airPlaneMode = intent.getBooleanExtra("state", false);
+			
+			Log.d(TAG, "airPlaneMode set to " + airPlaneMode);
+			
+//			ComponentName thisWidget = new ComponentName(context, WeatherWidget.class);
+//			AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+//			int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+//			update(context, appWidgetManager, appWidgetIds);
+		} 
 	}
 
 }

@@ -19,6 +19,34 @@ public class CityEntity implements Serializable {
 		this.name = name;
 		this.country = country;
 		this.state = state;
+		generateURL(country, state, name);
+	}
+
+	/**
+	 * constructs an city entity from a String in the format: country name/state name/city name
+	 * 
+	 * @param fullCityName
+	 */
+	public CityEntity(String fullCityName) {
+
+		String[] strings = fullCityName.split("/");
+
+		if (fullCityName == null || strings == null || strings.length != 3) {
+			System.err.println("error, fullCityName has wrong format");
+			return;
+		}
+		this.country = strings[0];
+		this.state = strings[1];
+		this.name = strings[2];
+		generateURL(country, state, name);
+	}
+
+	/**
+	 * @param country
+	 * @param state
+	 * @param name
+	 */
+	private void generateURL(String country, String state, String name) {
 		try {
 
 			String nameEncoded = URLEncoder.encode(name, "utf-8");
@@ -37,6 +65,16 @@ public class CityEntity implements Serializable {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * returns all the String fields defining a city entity in the format: country name/state name
+	 * /city name
+	 * 
+	 * @return
+	 */
+	public String getFullCityName() {
+		return country + "/" + state + "/" + name;
 	}
 
 	public String getName() {
