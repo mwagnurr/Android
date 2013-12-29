@@ -4,6 +4,7 @@
     <string name="widget_app_name">Weather Widget </string>
     <string name="tele_app_name">Incoming Calls</string>
     <string name="vaxjo_app_name">Weather App</string>
+    <string name="vaxjo_app_name_weatherin">Weather in</string>
     <string name="vaxjo_wind">Wind:</string>
     <string name="vaxjo_rain">Rain:</string>
     <string name="vaxjo_speed">Speed:</string>

@@ -6,9 +6,6 @@
 
 package at.lnu.ass3.weather;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Iterator;
 import android.app.ActionBar;
 import android.app.ListActivity;
@@ -51,7 +48,7 @@ import at.lnu.ass3.R;
  */
 
 public class VaxjoWeather extends ListActivity {
-	private InputStream input;
+	//private InputStream input;
 	private WeatherReport report = null;
 	private WeatherAdapter adapter;
 	private static final String[] periods = { "Night time", "Morning", "Day time", "Evening" };
@@ -69,6 +66,7 @@ public class VaxjoWeather extends ListActivity {
 
 		if (checkInternetConnection() && city != null) {
 			Log.d(TAG, "internet connection - attempt to retrieve weather information");
+			setTitle(getResources().getString(R.string.vaxjo_app_name_weatherin) + " " + city);
 			new WeatherRetriever().execute(city);
 		} else {
 			Toast.makeText(this, getResources().getString(R.string.weather_nointernet),
@@ -79,7 +77,6 @@ public class VaxjoWeather extends ListActivity {
 				Log.e(TAG, "no city entity in intent! error");
 			}
 		}
-		
 
 		/* Setup ListAdapter */
 		adapter = new WeatherAdapter(this);

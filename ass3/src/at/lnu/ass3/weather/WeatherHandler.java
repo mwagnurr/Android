@@ -229,6 +229,7 @@ public class WeatherHandler extends DefaultHandler {
 	/*
 	 * Private help methods
 	 */
+	@SuppressWarnings("unused")
 	private static void print_input(InputStream input) throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(input));
 		String inputLine;

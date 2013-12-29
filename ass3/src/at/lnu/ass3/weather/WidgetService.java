@@ -12,21 +12,17 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.SparseArray;
 import android.widget.RemoteViews;
 import at.lnu.ass3.R;
 
 public class WidgetService extends Service {
 	private static final String TAG = WidgetService.class.getSimpleName();
 
-	private SparseArray<CityEntity> widgetCities = new SparseArray<CityEntity>();
-	private SparseArray<WeatherForecast> widgetForecasts = new SparseArray<WeatherForecast>();
-
 	private final IBinder binder = new WidgetServiceBinder();
 
 	private Updater updater;
 
-	private static final String PREF_KEY_CITY = "city";
+	protected static final String PREF_KEY_CITY = "city";
 
 	public static final String SERVICE_INTENT_COMMAND_EXTRA = "command";
 	public static final int WIDGET_INIT = 0;
@@ -36,8 +32,25 @@ public class WidgetService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "onStart() received");
 
+		if (intent == null) {
+			Log.e(TAG, "error, Intent is null");
+			return START_STICKY;
+		}
 		int command = intent.getIntExtra(SERVICE_INTENT_COMMAND_EXTRA, -1);
 
+		processIntentCommand(intent, command);
+
+		return START_STICKY;
+
+	}
+
+	/**
+	 * processes initialization and update commands
+	 * 
+	 * @param intent
+	 * @param command
+	 */
+	private void processIntentCommand(Intent intent, int command) {
 		switch (command) {
 		case WIDGET_INIT: {
 			Log.d(TAG, "command int was init");
@@ -50,7 +63,7 @@ public class WidgetService extends Service {
 			CityEntity city = (CityEntity) intent.getSerializableExtra("city");
 
 			Log.d(TAG, "received city = " + city);
-			addCityEntity(appWidgetId, city);
+			storeCityEntity(appWidgetId, city);
 
 			Intent updateWidget = new Intent(getApplicationContext(), WeatherWidget.class);
 			updateWidget.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -80,28 +93,15 @@ public class WidgetService extends Service {
 		}
 
 		}
-
-		// Build the widget update for today
-		// RemoteViews updateViews = buildUpdate(this);
-
-		return START_STICKY;
-
 	}
 
-	public void addCityEntity(int appWidgetId, CityEntity city) {
-		// if (widgetCities.get(appWidgetId) != null) {
-		// Log.d(TAG, "appWidgetId is already stored");
-		// return;
-		// }
-		// widgetCities.put(appWidgetId, city);
-
-		/**
-		 * SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		 * SharedPreferences.Editor editor = prefs.edit();
-		 * 
-		 * editor.putString(VisitedCountries.orderColumnPrefName, columnName); editor.apply();
-		 */
-
+	/**
+	 * stores city entity in shared preferences for appWidgetId
+	 * 
+	 * @param appWidgetId
+	 * @param city
+	 */
+	public void storeCityEntity(int appWidgetId, CityEntity city) {
 		SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(this).edit();
 		prefs.putString(PREF_KEY_CITY + appWidgetId, city.getFullCityName());
 		prefs.apply();
@@ -109,6 +109,12 @@ public class WidgetService extends Service {
 		Log.d(TAG, "stored city: " + city.getFullCityName() + " as: " + PREF_KEY_CITY + appWidgetId);
 	}
 
+	/**
+	 * gets the to the appWidgetId corresponding city entity from shared preferences
+	 * 
+	 * @param appWidgetId
+	 * @return
+	 */
 	public CityEntity getCityEntity(int appWidgetId) {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -120,18 +126,17 @@ public class WidgetService extends Service {
 		}
 		Log.d(TAG, "got from pref city: " + cityFull);
 		return new CityEntity(cityFull);
-
-		// return widgetCities.get(appWidgetId);
 	}
 
+	/**
+	 * spawns a thread to retrieve the weather report for the widget with appWidgetId
+	 * 
+	 * @param appWidgetId
+	 */
 	public void retrieveWeatherReport(int appWidgetId) {
 		Log.d(TAG, "running Updater");
 		updater = new Updater(appWidgetId, getCityEntity(appWidgetId));
 		updater.start();
-	}
-
-	public WeatherForecast getLastWeatherForecast(int appWidgetId) {
-		return widgetForecasts.get(appWidgetId);
 	}
 
 	private class Updater extends Thread {
@@ -167,8 +172,8 @@ public class WidgetService extends Service {
 				Iterator<WeatherForecast> iter = report.iterator();
 
 				if (iter.hasNext()) {
+					// get only first forecast
 					firstForecast = iter.next();
-					widgetForecasts.put(appWidgetId, firstForecast);
 					Log.d(TAG, "forecast for widget: " + appWidgetId);
 					Log.d(TAG, "new forecast: " + firstForecast.toString());
 
@@ -198,21 +203,16 @@ public class WidgetService extends Service {
 
 			views.setTextViewText(R.id.weather_widget_city, city.getName());
 
-			if (firstForecast != null) {
-				// views.setImageViewResource(R.id.weather_widget_icon, srcId);
-				views.setTextViewText(R.id.weather_widget_temp, firstForecast.getTemp() + "°C");
-			}
-
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId,
 					clickIntent, 0);
 
 			views.setOnClickPendingIntent(R.id.weather_widget_mainview, pendingIntent);
 
+			// finally updating all the views to the widget
 			AppWidgetManager manager = AppWidgetManager.getInstance(WidgetService.this);
 			manager.updateAppWidget(appWidgetId, views);
 
 			Log.d(TAG, "updated AppWidget remote views");
-
 		}
 
 	}

@@ -1,15 +1,11 @@
 package at.lnu.ass3.weather;
 
-import java.util.List;
-
 import android.app.ActionBar;
 import android.app.ListActivity;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -84,50 +80,19 @@ public class CityList extends ListActivity {
 			intent.putExtra("appWidgetId", appWidgetId);
 
 			this.startService(intent);
-			
-//			Intent resultValue = new Intent();
-//			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-//					appWidgetId);
-//			resultValue.putExtra("city", city);
-//			setResult(RESULT_OK, resultValue);
-			
-			setResult(RESULT_OK);
-			
-//			Intent updateWidget = new Intent(getApplicationContext(),
-//                    WeatherWidget.class);
-//			updateWidget.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-//			int[] ids = { appWidgetId };
-//			updateWidget.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-//			sendBroadcast(updateWidget);
-			
-			Intent resultValue = new Intent();
-			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-					appWidgetId);
-			setResult(RESULT_OK, resultValue);
-			
-			finish();
-			// AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getBaseContext());
-			// List<AppWidgetProviderInfo> test = appWidgetManager.getInstalledProviders();
 
-			// TODO
-			// WeatherWidget widget = new WeatherWidget();
-			// widget.updateAppWidget(this, appWidgetManager, appWidgetId, city);
+			Intent resultValue = new Intent();
+			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+			setResult(RESULT_OK, resultValue);
+
+			finish();
+
 		} else {
 			Intent intent = new Intent(CityList.this, VaxjoWeather.class);
 			intent.putExtra("city", city);
 
 			startActivity(intent);
 		}
-	}
-
-	private static final int EDIT_ID = Menu.FIRST + 2;
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.weather_citylist_action_menu, menu);
-		menu.add(Menu.NONE, EDIT_ID, Menu.NONE, "Edit Settings").setIcon(R.drawable.ic_launcher);
-
-		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override

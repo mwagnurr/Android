@@ -1,87 +1,22 @@
 package at.lnu.ass3.weather;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.AsyncTask;
-import android.os.IBinder;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 import at.lnu.ass3.R;
 
 public class WeatherWidget extends AppWidgetProvider {
 	private static final String TAG = WeatherWidget.class.getSimpleName();
-	
-	private boolean airPlaneMode = false;
-
-	public void update(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-		Log.d(TAG, "updateWidget method called");
-
-		final int n = appWidgetIds.length;
-		for (int i = 0; i < n; i++) {
-			int appWidgetId = appWidgetIds[i];
-
-			Intent intent = new Intent(context, WidgetService.class);
-			intent.putExtra(WidgetService.SERVICE_INTENT_COMMAND_EXTRA, WidgetService.WIDGET_UPDATE);
-			intent.putExtra("appWidgetId", appWidgetId);
-			context.startService(intent);
-			Log.d(TAG, "sent start Service intent for appWidgetId " + appWidgetId);
-
-			
-			//creating initial widget view
-			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.weather_widget);
-			
-			
-			Intent updateClick = new Intent(context, WeatherWidget.class);
-			updateClick.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			int[] ids = { appWidgetId };
-			updateClick.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-			PendingIntent updatePen = PendingIntent.getBroadcast(context, appWidgetId, updateClick, 0);
-			views.setOnClickPendingIntent(R.id.weather_widget_update_button, updatePen);
-			
-		
-			
-			appWidgetManager.updateAppWidget(appWidgetId, views);
-			/**
-			 * WeatherForecast wf = getItem(position);
-			 * 
-			 * // filling row with weather forecast ImageView icon = (ImageView)
-			 * row.findViewById(R.id.weather_icon); int weatherCode = wf.getWeatherCode(); // TODO
-			 * check code range int resID = getResources().getIdentifier("n" + weatherCode,
-			 * "drawable", getPackageName()); icon.setImageResource(resID);
-			 */
-			// clickIntent.putExtra("city", currCity);
-
-			// clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			// clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId});
-
-			// PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId,
-			// clickIntent,
-			// PendingIntent.FLAG_UPDATE_CURRENT);
-			// PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId,
-			// clickIntent, 0);
-			//
-			// views.setOnClickPendingIntent(R.id.weather_widget_mainview, pendingIntent);
-
-			
-		}
-
-		/*
-		 * Intent intent = new Intent(this, MusicPlayer.class); // Notification // intent
-		 * PendingIntent notifIntent = PendingIntent.getActivity(this, 0, intent, 0);
-		 * builder.setContentIntent(notifIntent);
-		 */
-
-		Log.d(TAG, "finished update");
-	}
 
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -90,25 +25,121 @@ public class WeatherWidget extends AppWidgetProvider {
 		update(context, appWidgetManager, appWidgetIds);
 	}
 
+	/**
+	 * processes the update command
+	 * 
+	 * @param context
+	 * @param appWidgetManager
+	 * @param appWidgetIds
+	 */
+	private void update(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+		Log.d(TAG, "updateWidget method called");
+
+		boolean internetConnection = checkInternetConnection(context);
+
+		if (!internetConnection) {
+			Log.d(TAG, "no internet connection; do not update");
+			Toast.makeText(context, context.getResources().getString(R.string.weather_nointernet),
+					Toast.LENGTH_SHORT).show();
+		}
+
+		final int n = appWidgetIds.length;
+		for (int i = 0; i < n; i++) {
+			int appWidgetId = appWidgetIds[i];
+
+			// only start updater-service when not in airPlaneMode
+			if (internetConnection) {
+				Intent intent = new Intent(context, WidgetService.class);
+				intent.putExtra(WidgetService.SERVICE_INTENT_COMMAND_EXTRA,
+						WidgetService.WIDGET_UPDATE);
+				intent.putExtra("appWidgetId", appWidgetId);
+				context.startService(intent);
+				Log.d(TAG, "sent start Service intent for appWidgetId " + appWidgetId);
+			}
+			RemoteViews views = createDefaultRemoteView(context, appWidgetId);
+			appWidgetManager.updateAppWidget(appWidgetId, views);
+
+		}
+		Log.d(TAG, "finished update");
+	}
+
+	/**
+	 * creates the default remote view for the widget (update button click intent / basic layout)
+	 * 
+	 * @param context
+	 * @param appWidgetId
+	 * @return
+	 */
+	private RemoteViews createDefaultRemoteView(Context context, int appWidgetId) {
+		// creating initial widget view
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.weather_widget);
+
+		CityEntity city = retrieveCityEntity(context, appWidgetId);
+		views.setTextViewText(R.id.weather_widget_city, city.getName());
+
+		Intent updateClick = new Intent(context, WeatherWidget.class);
+		updateClick.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+		int[] ids = { appWidgetId };
+		updateClick.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+		PendingIntent updatePen = PendingIntent.getBroadcast(context, appWidgetId, updateClick, 0);
+		views.setOnClickPendingIntent(R.id.weather_widget_update_button, updatePen);
+		return views;
+	}
+
+	/**
+	 * retrieves city entity for appWidgetId from shared preferences
+	 * 
+	 * @param context
+	 * @param appWidgetId
+	 * @return
+	 */
+	private CityEntity retrieveCityEntity(Context context, int appWidgetId) {
+		CityEntity city = null;
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		String cityFull = prefs.getString(WidgetService.PREF_KEY_CITY + appWidgetId, null);
+
+		if (cityFull != null) {
+			city = new CityEntity(cityFull);
+
+		} else {
+			Log.e(TAG, "no city stored in pref ( " + WidgetService.PREF_KEY_CITY + appWidgetId
+					+ ")");
+		}
+		return city;
+	}
+
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		super.onReceive(context, intent);
 
 		Log.d(TAG, "onReceive method called: " + intent.getAction());
+	}
 
-		if (intent.getAction().equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
+	/**
+	 * checks if phone has internet connection; returns true if yes, false otherwise
+	 * 
+	 * @param context
+	 * @return
+	 */
+	private boolean checkInternetConnection(Context context) {
+		ConnectivityManager cm = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-			Log.d(TAG, "user switched to air plane mode");
-			
-			airPlaneMode = intent.getBooleanExtra("state", false);
-			
-			Log.d(TAG, "airPlaneMode set to " + airPlaneMode);
-			
-//			ComponentName thisWidget = new ComponentName(context, WeatherWidget.class);
-//			AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-//			int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-//			update(context, appWidgetManager, appWidgetIds);
-		} 
+		if (cm != null) {
+			NetworkInfo[] info = cm.getAllNetworkInfo();
+			if (info != null) {
+				for (int i = 0; i < info.length; i++)
+					if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+						Log.d(TAG, "connection to internet found");
+						return true;
+					}
+			} else {
+				Log.e(TAG, "no connection to internet found");
+				return false;
+			}
+
+		}
+		return false;
 	}
 
 }
