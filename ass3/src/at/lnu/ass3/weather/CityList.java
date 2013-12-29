@@ -22,7 +22,7 @@ public class CityList extends ListActivity {
 
 	private final CityEntity[] cities2 = new CityEntity[4];
 	private ArrayAdapter<CityEntity> adapter;
-	
+
 	private boolean widgetConfiguration = false;
 	int appWidgetId;
 
@@ -39,14 +39,26 @@ public class CityList extends ListActivity {
 		adapter = new ArrayAdapter<CityEntity>(this, R.layout.weather_city_list_row, cities2);
 
 		setListAdapter(adapter);
-		
+
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 		if (bundle != null) {
-			
+
 			appWidgetId = bundle.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
 					AppWidgetManager.INVALID_APPWIDGET_ID);
 			Log.d(TAG, "bundle was not null, appWidgetID = " + appWidgetId);
+
+			Log.d(TAG, "bundle size is " + bundle.size());
+
+			if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+				Log.e(TAG, "appWidgetId was invalid");
+				finish();
+			}
+
+			widgetConfiguration = true;
+		} else {
+			Log.d(TAG, "bundle was null, -> no configuration");
+			widgetConfiguration = false;
 		}
 
 		ActionBar actionBar = getActionBar();
@@ -63,21 +75,49 @@ public class CityList extends ListActivity {
 
 		Log.d(TAG, "clicked on list an selected: " + city);
 
-		if(widgetConfiguration){
+		if (widgetConfiguration) {
 			Log.d(TAG, "Widget Configuration");
-			
-			AppWidgetManager appWidgetManager = AppWidgetManager
-					.getInstance(getBaseContext());
-			List<AppWidgetProviderInfo> test = appWidgetManager.getInstalledProviders();
-			
-			//TODO
-			//WeatherWidget widget = new WeatherWidget();
-			//widget.updateAppWidget(this, appWidgetManager, appWidgetId, city);
-		}
-		Intent intent = new Intent(CityList.this, VaxjoWeather.class);
-		intent.putExtra("city", city);
 
-		startActivity(intent);
+			Intent intent = new Intent(CityList.this, WidgetService.class);
+			intent.putExtra(WidgetService.SERVICE_INTENT_COMMAND_EXTRA, WidgetService.WIDGET_INIT);
+			intent.putExtra("city", city);
+			intent.putExtra("appWidgetId", appWidgetId);
+
+			this.startService(intent);
+			
+//			Intent resultValue = new Intent();
+//			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+//					appWidgetId);
+//			resultValue.putExtra("city", city);
+//			setResult(RESULT_OK, resultValue);
+			
+			setResult(RESULT_OK);
+			
+//			Intent updateWidget = new Intent(getApplicationContext(),
+//                    WeatherWidget.class);
+//			updateWidget.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+//			int[] ids = { appWidgetId };
+//			updateWidget.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+//			sendBroadcast(updateWidget);
+			
+			Intent resultValue = new Intent();
+			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+					appWidgetId);
+			setResult(RESULT_OK, resultValue);
+			
+			finish();
+			// AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getBaseContext());
+			// List<AppWidgetProviderInfo> test = appWidgetManager.getInstalledProviders();
+
+			// TODO
+			// WeatherWidget widget = new WeatherWidget();
+			// widget.updateAppWidget(this, appWidgetManager, appWidgetId, city);
+		} else {
+			Intent intent = new Intent(CityList.this, VaxjoWeather.class);
+			intent.putExtra("city", city);
+
+			startActivity(intent);
+		}
 	}
 
 	private static final int EDIT_ID = Menu.FIRST + 2;

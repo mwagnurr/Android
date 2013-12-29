@@ -18,7 +18,7 @@
         android:id="@+id/weather_widget_textlayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@id/weather_icon"
+        android:layout_toRightOf="@id/weather_widget_icon"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingLeft="10dp" >

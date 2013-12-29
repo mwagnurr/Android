@@ -20,49 +20,32 @@ import at.lnu.ass3.R;
 public class WeatherWidget extends AppWidgetProvider {
 	private static final String TAG = WeatherWidget.class.getSimpleName();
 
-	private WidgetService widgetService = null;
-	
-	public void updateWidget(Context context){
-		
-	}
-
 	public void update(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		Log.d(TAG, "updateWidget method called");
-
-		Intent intent = new Intent(context, WidgetService.class);
-		context.startService(intent);
-		Log.d(TAG, "started the widget service (if not already running)");
-
-		context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
-		Log.d(TAG, "bound the widget service");
 
 		final int n = appWidgetIds.length;
 		for (int i = 0; i < n; i++) {
 			int appWidgetId = appWidgetIds[i];
+
+			Intent intent = new Intent(context, WidgetService.class);
+			intent.putExtra(WidgetService.SERVICE_INTENT_COMMAND_EXTRA, WidgetService.WIDGET_UPDATE);
+			intent.putExtra("appWidgetId", appWidgetId);
+			context.startService(intent);
+			Log.d(TAG, "sent start Service intent for appWidgetId " + appWidgetId);
+
+			
 			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.weather_widget);
-
-			// registering onClickListener
-			Intent clickIntent = new Intent(context, VaxjoWeather.class);
-
-			// get the with the widgetID associated cityEntity from the service
-			CityEntity currCity = widgetService.getCityEntity(i);
-			//views.setImageViewResource(R.id.weather_widget_icon, srcId);
-			views.setTextViewText(R.id.weather_widget_city, currCity.getName());
-			widgetService.retrieveWeatherReport(i, this, views);
 			
-			
+			appWidgetManager.updateAppWidget(appWidgetId, views);
 			/**
 			 * WeatherForecast wf = getItem(position);
-
-			// filling row with weather forecast
-			ImageView icon = (ImageView) row.findViewById(R.id.weather_icon);
-			int weatherCode = wf.getWeatherCode(); // TODO check code range
-			int resID = getResources().getIdentifier("n" + weatherCode, "drawable",
-					getPackageName());
-			icon.setImageResource(resID);
+			 * 
+			 * // filling row with weather forecast ImageView icon = (ImageView)
+			 * row.findViewById(R.id.weather_icon); int weatherCode = wf.getWeatherCode(); // TODO
+			 * check code range int resID = getResources().getIdentifier("n" + weatherCode,
+			 * "drawable", getPackageName()); icon.setImageResource(resID);
 			 */
-			clickIntent.putExtra("city", currCity);
-			
+			// clickIntent.putExtra("city", currCity);
 
 			// clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 			// clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId});
@@ -70,12 +53,12 @@ public class WeatherWidget extends AppWidgetProvider {
 			// PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId,
 			// clickIntent,
 			// PendingIntent.FLAG_UPDATE_CURRENT);
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId,
-					clickIntent, 0);
+			// PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId,
+			// clickIntent, 0);
+			//
+			// views.setOnClickPendingIntent(R.id.weather_widget_mainview, pendingIntent);
 
-			views.setOnClickPendingIntent(R.id.weather_widget_mainview, pendingIntent);
-
-			appWidgetManager.updateAppWidget(appWidgetId, views);
+			
 		}
 
 		/*
@@ -84,9 +67,7 @@ public class WeatherWidget extends AppWidgetProvider {
 		 * builder.setContentIntent(notifIntent);
 		 */
 
-		context.unbindService(connection);
-
-		Log.d(TAG, "finished update (unbound widget service)");
+		Log.d(TAG, "finished update");
 	}
 
 	@Override
@@ -108,28 +89,11 @@ public class WeatherWidget extends AppWidgetProvider {
 			AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 			int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 			update(context, appWidgetManager, appWidgetIds);
-		}else if (intent.getAction().equals("FINISHED_FORECAST")){
-			
+		} else if (intent.getAction().equals("FINISHED_FORECAST")) {
+
 			Log.d(TAG, "");
-			
-			
-		}
-	}
 
-	private ServiceConnection connection = new ServiceConnection() {
-		// @Override // Called when connection is made
-		public void onServiceConnected(ComponentName cName, IBinder binder) {
-			widgetService = ((WidgetService.WidgetServiceBinder) binder).getService();
 		}
-
-		// @Override //
-		public void onServiceDisconnected(ComponentName cName) {
-			widgetService = null;
-		}
-	};
-	
-	public interface WeatherCallBackListener{
-		
 	}
 
 }

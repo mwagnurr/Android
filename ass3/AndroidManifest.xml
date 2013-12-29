@@ -37,11 +37,17 @@
         <activity
             android:name="at.lnu.ass3.weather.CityList"
             android:label="@string/weather_city_list_app_name" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
         </activity>
         <activity
             android:name="at.lnu.ass3.weather.CityForm"
             android:label="@string/weather_city_list_form_app_name" >
         </activity>
+        <service
+            android:name="at.lnu.ass3.weather.WidgetService"
+            android:enabled="true" />
 
         <receiver
             android:name=".weather.WeatherWidget"
