@@ -28,7 +28,7 @@ public class CallEntity implements Serializable{
 
 	@Override
 	public String toString() {
-		return "CallEntity [senderPhoneNumber=" + senderPhoneNumber + "]";
+		return senderPhoneNumber;
 	}
 	
 	

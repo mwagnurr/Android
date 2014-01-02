@@ -26,6 +26,8 @@ public class CallReceiver extends BroadcastReceiver {
 			callsDAO.open();
 			callsDAO.createCallEntity(phonenumber);
 			Log.d(TAG, "stored call to datasource");
+		}else{
+			Log.d(TAG, "state was not ringing but: " + state);
 		}
 	}
 

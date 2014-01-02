@@ -11,6 +11,8 @@
     </uses-permission>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
     </uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" >
+    </uses-permission>
 
     <application
         android:allowBackup="true"
@@ -30,6 +32,13 @@
             android:name="at.lnu.ass3.telephony.IncomingCalls"
             android:label="@string/tele_app_name" >
         </activity>
+
+        <receiver android:name="at.lnu.ass3.telephony.CallReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name="at.lnu.ass3.weather.VaxjoWeather"
             android:label="@string/vaxjo_app_name" >
