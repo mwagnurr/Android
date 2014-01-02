@@ -4,10 +4,13 @@ import java.util.List;
 
 import android.app.ActionBar;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -84,6 +87,18 @@ public class IncomingCalls extends ListActivity {
 		startActivity(Intent.createChooser(i, getResources().getString(R.string.telephony_share)));
 	}
 
+	private boolean isTelephonyEnabled() {
+		TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+		return tm != null && tm.getSimState() == TelephonyManager.SIM_STATE_READY;
+	}
+
+	private static boolean isAirplaneModeOn(Context context) {
+
+		return Settings.System.getInt(context.getContentResolver(),
+				Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+
+	}
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
@@ -94,8 +109,23 @@ public class IncomingCalls extends ListActivity {
 
 		if (telephonySupported == false) {
 			Log.e(TAG, "phone doesnt support telephony!");
-			Toast.makeText(this, getResources().getString(R.string.telephony_alert),
+//			Toast.makeText(this, getResources().getString(R.string.telephony_alert),
+//					Toast.LENGTH_SHORT).show();
+		}
+
+		if (isAirplaneModeOn(this)) {
+			Log.e(TAG, "phone is in airplane mode, cant call!");
+			Toast.makeText(this, getResources().getString(R.string.telephony_alert_airplane),
 					Toast.LENGTH_SHORT).show();
+			return true;
+		} else {
+			Log.d(TAG, "phone is not in airplane mode! good!");
+		}
+
+		if (isTelephonyEnabled()) {
+			Log.d(TAG, "DEBUG, second function says telephony is available!");
+		} else {
+			Log.e(TAG, "DEBUG, second function says telephony not available as well!");
 		}
 		if (item.getItemId() == 0) { // CALL
 

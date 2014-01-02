@@ -27,9 +27,11 @@
     <string name="weather_city_state_hint">e.g. Kronoberg</string>
     <string name="weather_city_formdescription">Please enter the correct details of the city you want to retrieve the weather from</string>
     <string name="weather_widget_update_button">Update</string>
-	<string name="weather_widget_icon_hint">Weather Icon</string>
-	<string name="telephony_alert">The device does not support telephony!</string>
-	<string name="telephony_call">Call</string>
-	<string name="telephony_sendvia_sms">Share via message</string>
-	<string name="telephony_share">Share</string>
+    <string name="weather_widget_icon_hint">Weather Icon</string>
+    <string name="telephony_alert">The device does not support telephony!</string>
+    <string name="telephony_alert_airplane">The device is currently in airplane mode, can\'t call or send!</string>
+    <string name="telephony_call">Call</string>
+    <string name="telephony_sendvia_sms">Share via message</string>
+    <string name="telephony_share">Share</string>
+
 </resources>
