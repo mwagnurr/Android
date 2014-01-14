@@ -15,11 +15,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import at.lnu.ass3.telephony.IncomingCalls;
 import at.lnu.ass3.weather.CityList;
-import at.lnu.ass3.weather.VaxjoWeather;
 
 public class MainList extends ListActivity {
 
 	private List<String> activities = new ArrayList<String>();
+	@SuppressWarnings("rawtypes")
 	private Map<String, Class> name2class = new HashMap<String, Class>();
 
 	@Override

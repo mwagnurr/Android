@@ -68,10 +68,7 @@ public class IncomingCalls extends ListActivity {
 	private void call(String number) {
 
 		String toDial = "tel:" + number;
-		// start activity for ACTION_DIAL or ACTION_CALL intent
 		startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse(toDial)));
-		// Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse(toDial));
-		// startActivity(Intent.createChooser(i, "Call"));
 	}
 
 	/**
@@ -82,7 +79,6 @@ public class IncomingCalls extends ListActivity {
 	private void sendMessage(String theMessage) {
 		Intent i = new Intent(Intent.ACTION_SEND);
 		i.setType("text/plain");
-		// i.putExtra(Intent.EXTRA_SUBJECT, "Test");
 		i.putExtra(Intent.EXTRA_TEXT, theMessage);
 		startActivity(Intent.createChooser(i, getResources().getString(R.string.telephony_share)));
 	}
@@ -92,6 +88,7 @@ public class IncomingCalls extends ListActivity {
 		return tm != null && tm.getSimState() == TelephonyManager.SIM_STATE_READY;
 	}
 
+	@SuppressWarnings("deprecation")
 	private static boolean isAirplaneModeOn(Context context) {
 
 		return Settings.System.getInt(context.getContentResolver(),
@@ -107,10 +104,10 @@ public class IncomingCalls extends ListActivity {
 		PackageManager pm = getPackageManager();
 		boolean telephonySupported = pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
 
+		// telephony checks
+
 		if (telephonySupported == false) {
 			Log.e(TAG, "phone doesnt support telephony!");
-//			Toast.makeText(this, getResources().getString(R.string.telephony_alert),
-//					Toast.LENGTH_SHORT).show();
 		}
 
 		if (isAirplaneModeOn(this)) {
@@ -126,6 +123,7 @@ public class IncomingCalls extends ListActivity {
 			Log.d(TAG, "DEBUG, second function says telephony is available!");
 		} else {
 			Log.e(TAG, "DEBUG, second function says telephony not available as well!");
+			return true;
 		}
 		if (item.getItemId() == 0) { // CALL
 
@@ -136,12 +134,6 @@ public class IncomingCalls extends ListActivity {
 		} else if (item.getItemId() == 1) { // SMS
 			Log.d(TAG, "selected SHARE");
 			CallEntity ce = adapter.getItem((info.position));
-
-			// String toDial = "tel:" + ce.getSenderPhoneNumber();
-			// Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"
-			// + ce.getSenderPhoneNumber()));
-			// intent.putExtra("sms_body", ce.getSenderPhoneNumber());
-			// startActivity(intent);
 
 			sendMessage(ce.getSenderPhoneNumber());
 		}
